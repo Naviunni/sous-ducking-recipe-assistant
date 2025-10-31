@@ -1,8 +1,6 @@
-# AI-Assisted Recipe Assistant (IUI Course Starter)
+# Sous Duckling : an AI-Assisted Recipe Assistant
 
-A minimal, end-to-end starter project for a conversational recipe assistant. Users can ask for recipes, get ingredients and step-by-step instructions, declare dislikes or missing ingredients, and receive suggested substitutions. Conversation context is stored per session.
-
-This scaffold runs locally with mock logic and is ready to integrate with real APIs and LLMs.
+A smart conversational recipe assistant! Users can ask for recipes, get ingredients and step-by-step instructions, declare dislikes or missing ingredients, and receive suggested substitutions. Conversation context is stored per session.
 
 ## Quick Start
 
