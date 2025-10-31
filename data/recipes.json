@@ -1,0 +1,44 @@
+{
+  "recipes": [
+    {
+      "name": "lasagna",
+      "ingredients": [
+        {"name": "lasagna noodles", "quantity": "12 pieces"},
+        {"name": "ground beef", "quantity": "500 g"},
+        {"name": "tomato sauce", "quantity": "2 cups"},
+        {"name": "ricotta cheese", "quantity": "1 cup"},
+        {"name": "mozzarella cheese", "quantity": "1.5 cups"},
+        {"name": "mushrooms", "quantity": "1 cup, sliced"},
+        {"name": "onion", "quantity": "1, diced"},
+        {"name": "garlic", "quantity": "2 cloves, minced"}
+      ],
+      "steps": [
+        "Preheat oven to 375°F (190°C).",
+        "Cook lasagna noodles according to package instructions.",
+        "Sauté onion, garlic, and mushrooms; add ground beef and cook until browned.",
+        "Stir in tomato sauce and simmer 5 minutes.",
+        "Layer noodles, ricotta cheese, meat sauce, and mozzarella in a baking dish.",
+        "Bake for 25–30 minutes until bubbly. Let rest 10 minutes before serving."
+      ]
+    },
+    {
+      "name": "pancakes",
+      "ingredients": [
+        {"name": "all-purpose flour", "quantity": "1.5 cups"},
+        {"name": "milk", "quantity": "1.25 cups"},
+        {"name": "egg", "quantity": "1"},
+        {"name": "butter", "quantity": "2 tbsp, melted"},
+        {"name": "baking powder", "quantity": "3.5 tsp"},
+        {"name": "salt", "quantity": "1/2 tsp"},
+        {"name": "sugar", "quantity": "1 tbsp"}
+      ],
+      "steps": [
+        "In a bowl, combine flour, baking powder, salt, and sugar.",
+        "Whisk in milk, egg, and melted butter until just combined.",
+        "Heat a lightly oiled griddle over medium heat.",
+        "Pour 1/4 cup batter per pancake and cook until bubbles form; flip and cook until golden."
+      ]
+    }
+  ]
+}
+
