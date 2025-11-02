@@ -70,7 +70,7 @@ def has_llm() -> bool:
     return _get_client() is not None
 
 
-def generate_recipe(recipe_name: str, dislikes: Optional[list] = None) -> Dict:
+def generate_recipe(recipe_name: str, dislikes: Optional[list] = None, history: Optional[list] = None) -> Dict:
     """Generate a recipe via LLM as structured JSON.
 
     Returns a dict with keys: name, ingredients (list of {name, quantity}), steps (list[str]).
@@ -109,14 +109,19 @@ def generate_recipe(recipe_name: str, dislikes: Optional[list] = None) -> Dict:
     )
 
     try:
+        messages = [{"role": "system", "content": system}]
+        if history:
+            # include a small slice of prior turns to give continuity
+            for m in history[-8:]:
+                if m.get("role") in ("user", "assistant") and m.get("content"):
+                    messages.append({"role": m["role"], "content": m["content"]})
+        messages.append({"role": "user", "content": user})
+
         resp = client.chat.completions.create(
             model=os.getenv("OPENAI_MODEL", "gpt-4o"),
             temperature=0.3,
             max_tokens=800,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
+            messages=messages,
             response_format={"type": "json_object"},
         )
         content = resp.choices[0].message.content if resp.choices else "{}"
@@ -134,3 +139,74 @@ def generate_recipe(recipe_name: str, dislikes: Optional[list] = None) -> Dict:
             return {"name": recipe_name, "ingredients": [], "steps": [content]}
     except Exception as e:  # pragma: no cover - runtime/network errors
         return {"name": recipe_name, "ingredients": [], "steps": [f"LLM error: {e}"]}
+
+
+def chat_json(messages: list, max_tokens: int = 400) -> Dict:
+    """Send a chat with response_format json_object and return parsed JSON.
+
+    Returns empty dict if LLM unavailable or parsing fails.
+    messages: list of {role: 'system'|'user'|'assistant', content: str}
+    """
+    import json
+    client = _get_client()
+    if not client:
+        return {}
+    try:
+        resp = client.chat.completions.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            temperature=0.2,
+            max_tokens=max_tokens,
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+        content = resp.choices[0].message.content if resp.choices else "{}"
+        return json.loads(content)
+    except Exception:
+        return {}
+
+
+def modify_recipe(base_recipe: Dict, dislikes: Optional[list] = None, substitutions: Optional[list] = None, history: Optional[list] = None) -> Dict:
+    """Modify an existing recipe via LLM given constraints.
+
+    base_recipe: existing recipe JSON (name, ingredients, steps)
+    dislikes: list of strings to avoid
+    substitutions: list of pairs like [("milk", "oat milk")]
+    history: optional chat history (list of {role, content}) for context
+    """
+    import json
+
+    dislikes = dislikes or []
+    substitutions = substitutions or []
+    client = _get_client()
+    if not client:
+        # fallback: just return the base recipe unchanged
+        return base_recipe
+
+    system = "You are a helpful cooking assistant. Modify the given recipe JSON to satisfy user constraints without losing structure."
+    subs_text = "; ".join([f"{a} -> {b}" for a, b in substitutions]) if substitutions else "none"
+    user = (
+        "Modify the following recipe JSON to avoid dislikes and apply substitutions, keeping the same JSON schema.\n"
+        f"Dislikes: {', '.join(dislikes) if dislikes else 'none'}\n"
+        f"Substitutions: {subs_text}\n"
+        f"Recipe JSON: {json.dumps(base_recipe, ensure_ascii=False)}"
+    )
+
+    messages = [{"role": "system", "content": system}]
+    if history:
+        for m in history[-8:]:
+            if m.get("role") in ("user", "assistant") and m.get("content"):
+                messages.append({"role": m["role"], "content": m["content"]})
+    messages.append({"role": "user", "content": user})
+
+    try:
+        resp = client.chat.completions.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            temperature=0.3,
+            max_tokens=900,
+            messages=messages,
+            response_format={"type": "json_object"},
+        )
+        content = resp.choices[0].message.content if resp.choices else "{}"
+        return json.loads(content)
+    except Exception as e:  # pragma: no cover
+        return base_recipe
