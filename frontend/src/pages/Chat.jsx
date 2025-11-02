@@ -27,19 +27,22 @@ export default function ChatPage() {
   }
 
   return (
-    <>
-      <div className="card">
-        <div className="header">
-          <h1 style={{ margin: 0, fontSize: 18 }}>Chat</h1>
+    <div className="ra-container mx-auto">
+      <div className="row g-4">
+        <div className="col-lg-6">
+          <div className="card-ra">
+            <div className="p-3 border-bottom"><h2 className="h5 m-0">Chat</h2></div>
+            <ChatUI messages={messages} onSend={sendMessage} />
+          </div>
         </div>
-        <ChatUI messages={messages} onSend={sendMessage} />
+        <div className="col-lg-6">
+          {recipe && (
+            <div className="card-ra p-3">
+              <RecipeCard recipe={recipe} />
+            </div>
+          )}
+        </div>
       </div>
-      {recipe && (
-        <div style={{ marginTop: 16 }}>
-          <RecipeCard recipe={recipe} />
-        </div>
-      )}
-    </>
+    </div>
   )
 }
-

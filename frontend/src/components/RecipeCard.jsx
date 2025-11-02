@@ -3,22 +3,25 @@ import React from 'react'
 export default function RecipeCard({ recipe }) {
   if (!recipe) return null
   return (
-    <div className="card" style={{ padding: 16 }}>
-      <h2 style={{ margin: '0 0 8px 0' }}>{recipe.name}</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
-        <div>
-          <h3 style={{ margin: '8px 0' }}>Ingredients</h3>
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
+    <div>
+      <h2 className="h4 mb-3">{recipe.name}</h2>
+      <div className="row g-3">
+        <div className="col-md-5">
+          <h3 className="h6">Ingredients</h3>
+          <ul className="list-group list-group-flush">
             {recipe.ingredients?.map((ing, i) => (
-              <li key={i}>{ing.quantity ? `${ing.quantity} ` : ''}{ing.name}</li>
+              <li key={i} className="list-group-item px-0">
+                {ing.quantity ? <strong className="me-1">{ing.quantity}</strong> : null}
+                {ing.name}
+              </li>
             ))}
           </ul>
         </div>
-        <div>
-          <h3 style={{ margin: '8px 0' }}>Steps</h3>
-          <ol style={{ paddingLeft: 18, margin: 0 }}>
+        <div className="col-md-7">
+          <h3 className="h6">Steps</h3>
+          <ol className="ps-3">
             {recipe.steps?.map((s, i) => (
-              <li key={i} style={{ marginBottom: 6 }}>{s}</li>
+              <li key={i} className="mb-2">{s}</li>
             ))}
           </ol>
         </div>
@@ -26,4 +29,3 @@ export default function RecipeCard({ recipe }) {
     </div>
   )
 }
-
