@@ -58,6 +58,12 @@ class SubstituteResponse(BaseModel):
     substitutes: List[str]
 
 
+def _respond(session_id: str, reply: str, recipe: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Append assistant message to history and return API response payload."""
+    ctx.append_assistant_message(session_id, reply)
+    return {"reply": reply, "recipe": recipe}
+
+
 @app.get("/recipes/{name}", response_model=Recipe)
 async def get_recipe(name: str):
     """Fetch a recipe by name from local data."""
@@ -158,15 +164,15 @@ async def ask(req: AskRequest):
     # First, try LLM-based intent parsing for robust mapping
     intent = None
     if has_llm():
-        parsed = parse_intent(message, ctx.get_messages(session_id))
+        history = ctx.get_messages(session_id)
+        parsed = parse_intent(message, history)
         intent = parsed.get("intent")
 
         if intent == "replace":
             current = ctx.get_current_recipe(session_id)
             if not current:
                 reply = "Tell me which recipe first (e.g., 'recipe for lasagna')."
-                ctx.append_assistant_message(session_id, reply)
-                return {"reply": reply, "recipe": None}
+                return _respond(session_id, reply, None)
             replacements = parsed.get("replacements", [])
             dislikes = ctx.get_dislikes(session_id)
             for r in replacements:
@@ -174,7 +180,7 @@ async def ask(req: AskRequest):
                 if src:
                     dislikes.add(src)
             updated = _normalize_recipe(
-                modify_recipe(current, list(dislikes), [(r["src"], r["dst"]) for r in replacements if r.get("src") and r.get("dst")], ctx.get_messages(session_id))
+                modify_recipe(current, list(dislikes), [(r["src"], r["dst"]) for r in replacements if r.get("src") and r.get("dst")], history)
             )
             ctx.set_current_recipe(session_id, updated)
             if replacements:
@@ -182,8 +188,7 @@ async def ask(req: AskRequest):
                 reply = f"Updated the recipe: replaced '{first['src']}' with '{first['dst']}'."
             else:
                 reply = "Updated the recipe with requested substitutions."
-            ctx.append_assistant_message(session_id, reply)
-            return {"reply": reply, "recipe": updated}
+            return _respond(session_id, reply, updated)
 
         if intent == "add_dislike":
             dislikes_in = parsed.get("dislikes", [])
@@ -193,40 +198,38 @@ async def ask(req: AskRequest):
                 current = ctx.get_current_recipe(session_id)
                 if current and has_llm():
                     regenerated = _normalize_recipe(
-                        modify_recipe(current, list(ctx.get_dislikes(session_id)), None, ctx.get_messages(session_id))
+                        modify_recipe(current, list(ctx.get_dislikes(session_id)), None, history)
                     )
                     ctx.set_current_recipe(session_id, regenerated)
                     reply = "Regenerated the recipe based on your dislikes."
-                    ctx.append_assistant_message(session_id, reply)
-                    return {"reply": reply, "recipe": regenerated}
+                    return _respond(session_id, reply, regenerated)
 
         if intent == "get_recipe" and parsed.get("recipe_name"):
             rn = parsed.get("recipe_name")
-            generated = _normalize_recipe(generate_recipe(rn, list(ctx.get_dislikes(session_id)), ctx.get_messages(session_id)))
+            generated = _normalize_recipe(generate_recipe(rn, list(ctx.get_dislikes(session_id)), history))
             ctx.set_current_recipe(session_id, generated)
             reply = f"Here's a recipe for {generated.get('name', rn)}."
-            ctx.append_assistant_message(session_id, reply)
-            return {"reply": reply, "recipe": generated}
+            return _respond(session_id, reply, generated)
 
     # Fallback heuristics: Replacement intent
     replacement = _extract_replacement(message)
     if replacement:
         current = ctx.get_current_recipe(session_id)
         if not current:
-            return {"reply": "Tell me which recipe first (e.g., 'recipe for lasagna').", "recipe": None}
+            return _respond(session_id, "Tell me which recipe first (e.g., 'recipe for lasagna').", None)
         src, dst = replacement
         dislikes = ctx.get_dislikes(session_id)
         dislikes.add(src)
         if has_llm():
-            updated = _normalize_recipe(modify_recipe(current, list(dislikes), [(src, dst)], ctx.get_messages(session_id)))
+            history = ctx.get_messages(session_id)
+            updated = _normalize_recipe(modify_recipe(current, list(dislikes), [(src, dst)], history))
             ctx.set_current_recipe(session_id, updated)
             reply = f"Updated the recipe: replaced '{src}' with '{dst}'."
         else:
             updated = se.apply_substitutions(current, dislikes)
             ctx.set_current_recipe(session_id, updated)
             reply = f"Updated the recipe to avoid '{src}'."
-        ctx.append_assistant_message(session_id, reply)
-        return {"reply": reply, "recipe": updated}
+        return _respond(session_id, reply, updated)
 
     # Fallback heuristics: Dislike or missing ingredient
     dislike = _extract_dislike(message)
@@ -234,52 +237,45 @@ async def ask(req: AskRequest):
         ctx.add_dislike(session_id, dislike)
         current = ctx.get_current_recipe(session_id)
         if not current:
-            return {
-                "reply": f"Got it. I'll keep '{dislike}' in mind for substitutions.",
-                "recipe": None,
-            }
+            return _respond(session_id, f"Got it. I'll keep '{dislike}' in mind for substitutions.", None)
         dislikes = ctx.get_dislikes(session_id)
         # Prefer regenerating via LLM to fully adapt the recipe
         if has_llm():
-            regenerated = _normalize_recipe(modify_recipe(current, list(dislikes), None, ctx.get_messages(session_id)))
+            history = ctx.get_messages(session_id)
+            regenerated = _normalize_recipe(modify_recipe(current, list(dislikes), None, history))
             ctx.set_current_recipe(session_id, regenerated)
             reply = f"Regenerated the recipe to avoid '{dislike}'."
-            ctx.append_assistant_message(session_id, reply)
-            return {"reply": reply, "recipe": regenerated}
+            return _respond(session_id, reply, regenerated)
         # Fallback: local substitution engine
         updated = se.apply_substitutions(current, dislikes)
         ctx.set_current_recipe(session_id, updated)
         reply = f"Updated the recipe to avoid '{dislike}'."
-        ctx.append_assistant_message(session_id, reply)
-        return {"reply": reply, "recipe": updated}
+        return _respond(session_id, reply, updated)
 
     # Ask for a recipe
     recipe_name = _extract_recipe_name(message)
     if recipe_name:
         dislikes = ctx.get_dislikes(session_id)
         if has_llm():
-            generated = _normalize_recipe(generate_recipe(recipe_name, list(dislikes), ctx.get_messages(session_id)))
+            history = ctx.get_messages(session_id)
+            generated = _normalize_recipe(generate_recipe(recipe_name, list(dislikes), history))
             ctx.set_current_recipe(session_id, generated)
             reply = f"Here's a recipe for {generated.get('name', recipe_name)}."
-            ctx.append_assistant_message(session_id, reply)
-            return {"reply": reply, "recipe": generated}
+            return _respond(session_id, reply, generated)
         # Fallback: local data + substitution engine
         found = rr.get_recipe_by_name(recipe_name)
         if found:
             adjusted = se.apply_substitutions(found, dislikes)
             ctx.set_current_recipe(session_id, adjusted)
             reply = f"Here's a recipe for {adjusted['name']} (local data)."
-            ctx.append_assistant_message(session_id, reply)
-            return {"reply": reply, "recipe": adjusted}
+            return _respond(session_id, reply, adjusted)
         reply = f"Couldn't find a local recipe for '{recipe_name}'. Configure OPENAI_API_KEY for AI-generated recipes."
-        ctx.append_assistant_message(session_id, reply)
-        return {"reply": reply, "recipe": None}
+        return _respond(session_id, reply, None)
 
     # Fallback: mock LLM
     resp = ask_llm(message)
     reply = resp.get("text", "I'm here to help with recipes!")
-    ctx.append_assistant_message(session_id, reply)
-    return {"reply": reply, "recipe": None}
+    return _respond(session_id, reply, None)
 def _normalize_recipe(data: Dict[str, Any]) -> Dict[str, Any]:
     name = str(data.get("name", "recipe")).strip() or "recipe"
     raw_ings = data.get("ingredients", []) or []

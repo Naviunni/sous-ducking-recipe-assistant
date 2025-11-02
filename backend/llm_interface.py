@@ -4,7 +4,7 @@ Uses the modern OpenAI SDK (v1+) and returns a simple dict: {"text": ...}.
 Falls back to a mock response if the package or API key is missing.
 """
 
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 import os
 
 try:  # keep a small guard for missing package
@@ -70,13 +70,34 @@ def has_llm() -> bool:
     return _get_client() is not None
 
 
+def _model_name(override: Optional[str] = None) -> str:
+    """Resolve the model name with env default."""
+    return override or os.getenv("OPENAI_MODEL", "gpt-4o")
+
+
+def _parse_json_safe(content: str, fallback: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Parse JSON content, returning fallback on error."""
+    import json
+    import re
+    try:
+        return json.loads(content)
+    except Exception:
+        match = re.search(r"\{.*\}\s*$", content, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(0))
+            except Exception:
+                pass
+        return fallback or {}
+
+
 def generate_recipe(recipe_name: str, dislikes: Optional[list] = None, history: Optional[list] = None) -> Dict:
     """Generate a recipe via LLM as structured JSON.
 
     Returns a dict with keys: name, ingredients (list of {name, quantity}), steps (list[str]).
     Falls back to a minimal stub if LLM unavailable.
     """
-    import json, re
+    import json
 
     dislikes = dislikes or []
     client = _get_client()
@@ -118,25 +139,21 @@ def generate_recipe(recipe_name: str, dislikes: Optional[list] = None, history: 
         messages.append({"role": "user", "content": user})
 
         resp = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            model=_model_name(),
             temperature=0.3,
             max_tokens=800,
             messages=messages,
             response_format={"type": "json_object"},
         )
         content = resp.choices[0].message.content if resp.choices else "{}"
-        try:
-            return json.loads(content)
-        except json.JSONDecodeError:
-            # Try to extract JSON substring
-            match = re.search(r"\{.*\}\s*$", content, re.DOTALL)
-            if match:
-                try:
-                    return json.loads(match.group(0))
-                except Exception:
-                    pass
-            # last resort minimal
-            return {"name": recipe_name, "ingredients": [], "steps": [content]}
+        parsed = _parse_json_safe(content, {"name": recipe_name, "ingredients": [], "steps": []})
+        if "name" not in parsed:
+            parsed["name"] = recipe_name
+        if "ingredients" not in parsed:
+            parsed["ingredients"] = []
+        if "steps" not in parsed:
+            parsed["steps"] = []
+        return parsed
     except Exception as e:  # pragma: no cover - runtime/network errors
         return {"name": recipe_name, "ingredients": [], "steps": [f"LLM error: {e}"]}
 
@@ -153,14 +170,14 @@ def chat_json(messages: list, max_tokens: int = 400) -> Dict:
         return {}
     try:
         resp = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            model=_model_name(),
             temperature=0.2,
             max_tokens=max_tokens,
             messages=messages,
             response_format={"type": "json_object"},
         )
         content = resp.choices[0].message.content if resp.choices else "{}"
-        return json.loads(content)
+        return _parse_json_safe(content, {})
     except Exception:
         return {}
 
@@ -200,13 +217,13 @@ def modify_recipe(base_recipe: Dict, dislikes: Optional[list] = None, substituti
 
     try:
         resp = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            model=_model_name(),
             temperature=0.3,
             max_tokens=900,
             messages=messages,
             response_format={"type": "json_object"},
         )
         content = resp.choices[0].message.content if resp.choices else "{}"
-        return json.loads(content)
+        return _parse_json_safe(content, base_recipe)
     except Exception as e:  # pragma: no cover
         return base_recipe
