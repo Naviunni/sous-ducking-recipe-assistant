@@ -1,45 +1,21 @@
-import React, { useMemo, useState } from 'react'
-import ChatUI from './components/ChatUI.jsx'
-import RecipeCard from './components/RecipeCard.jsx'
-import { ask } from './lib/api.js'
-import { genSessionId } from './lib/session.js'
+import React from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Header from './components/Header.jsx'
+import Home from './pages/Home.jsx'
+import Chat from './pages/Chat.jsx'
+import SavedRecipes from './pages/SavedRecipes.jsx'
 
 export default function App() {
-  const sessionId = useMemo(() => genSessionId(), [])
-  const [messages, setMessages] = useState([
-    { role: 'assistant', text: "Hi! Ask me for a recipe, e.g., 'recipe for lasagna'." }
-  ])
-  const [recipe, setRecipe] = useState(null)
-
-  async function sendMessage(text) {
-    const msg = text.trim()
-    if (!msg) return
-    const next = [...messages, { role: 'user', text: msg }]
-    setMessages(next)
-    try {
-      const data = await ask(msg, sessionId)
-      setMessages(m => [...m, { role: 'assistant', text: data.reply }])
-      if (data.recipe) setRecipe(data.recipe)
-    } catch (err) {
-      setMessages(m => [...m, { role: 'assistant', text: 'Error contacting backend.' }])
-      console.error(err)
-    }
-  }
-
   return (
-    <div className="container">
-      <div className="card">
-        <div className="header">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C9.239 3 7 5.239 7 8C7 10.761 9.239 13 12 13C14.761 13 17 10.761 17 8C17 5.239 14.761 3 12 3ZM5 20C5 16.686 7.686 14 11 14H13C16.314 14 19 16.686 19 20V21H5V20Z" fill="#111827"/></svg>
-          <h1>Sous Duckling</h1>
-        </div>
-        <ChatUI messages={messages} onSend={sendMessage} />
+    <BrowserRouter>
+      <div className="container">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/saved" element={<SavedRecipes />} />
+        </Routes>
       </div>
-      {recipe && (
-        <div style={{ marginTop: 16 }}>
-          <RecipeCard recipe={recipe} />
-        </div>
-      )}
-    </div>
+    </BrowserRouter>
   )
 }
