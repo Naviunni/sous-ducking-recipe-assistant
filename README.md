@@ -25,6 +25,17 @@ uvicorn backend.app:app --reload
 
 The API will be available at `http://localhost:8000`.
 
+3. Enable real LLM responses (OpenAI GPT-4o):
+
+Set your API key and optionally the model/base URL, then restart the server.
+
+```
+export OPENAI_API_KEY=sk-...           # required for real calls
+export OPENAI_MODEL=gpt-4o             # optional (default: gpt-4o)
+```
+
+Without `OPENAI_API_KEY`, the backend returns mock LLM replies.
+
 ### Frontend
 
 Requirements: Node 18+
@@ -83,4 +94,3 @@ Modules:
 
 - CORS is enabled for all origins in development.
 - Intent parsing in `/ask` is intentionally simple for a starting point.
-
