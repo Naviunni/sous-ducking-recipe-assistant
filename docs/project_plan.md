@@ -1,4 +1,4 @@
-# Project Plan — AI-Assisted Recipe Assistant
+# AI-Assisted Recipe Assistant
 
 ## Goal
 Build a conversational recipe assistant that provides recipes, ingredients, and step-by-step instructions, supporting dislikes/missing ingredients with substitutions, and maintaining conversational context.
