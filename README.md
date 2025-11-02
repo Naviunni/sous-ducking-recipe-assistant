@@ -54,6 +54,10 @@ npm run dev
 ```
 
 Open `http://localhost:5173`. The frontend points to `http://localhost:8000` by default. You can override with `VITE_API_BASE`.
+Navigation:
+- Home → Welcome screen and a “Start Chatting” button.
+- Chat → Conversational interface backed by the API.
+- Saved Recipes
 
 ## Backend Overview
 
@@ -76,9 +80,11 @@ Modules:
 
 - Framework: React (Vite)
 - Components:
+  - `Header.jsx` — Top navigation bar (Home, Chat, Saved)
   - `ChatUI.jsx` — Chat interface (user + assistant)
   - `RecipeCard.jsx` — Displays recipe name, ingredients, steps
-  - `App.jsx` — State management, backend calls, session id
+  - Pages: `Home.jsx` (welcome + CTA), `Chat.jsx` (conversation), `SavedRecipes.jsx` (placeholder)
+  - `App.jsx` — Router and layout
 
 ## Data
 
