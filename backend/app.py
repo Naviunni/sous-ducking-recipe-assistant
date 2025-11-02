@@ -9,7 +9,7 @@ from .utils.logging_utils import get_logger
 from . import context_manager as ctx
 from . import recipe_retrieval as rr
 from . import substitution_engine as se
-from .llm_interface import ask_llm
+from .llm_interface import ask_llm, generate_recipe, has_llm
 
 
 logger = get_logger(__name__)
@@ -118,31 +118,58 @@ async def ask(req: AskRequest):
                 "recipe": None,
             }
         dislikes = ctx.get_dislikes(session_id)
+        # Prefer regenerating via LLM to fully adapt the recipe
+        if has_llm():
+            regenerated = _normalize_recipe(generate_recipe(current.get("name", "current recipe"), list(dislikes)))
+            ctx.set_current_recipe(session_id, regenerated)
+            return {
+                "reply": f"Regenerated the recipe to avoid '{dislike}'.",
+                "recipe": regenerated,
+            }
+        # Fallback: local substitution engine
         updated = se.apply_substitutions(current, dislikes)
         ctx.set_current_recipe(session_id, updated)
-        return {
-            "reply": f"Updated the current recipe to avoid '{dislike}'.",
-            "recipe": updated,
-        }
+        return {"reply": f"Updated the recipe to avoid '{dislike}'.", "recipe": updated}
 
     # Ask for a recipe
     recipe_name = _extract_recipe_name(message)
     if recipe_name:
-        found = rr.get_recipe_by_name(recipe_name)
-        if not found:
-            return {
-                "reply": f"I couldn't find a recipe for '{recipe_name}'. Try another name?",
-                "recipe": None,
-            }
         dislikes = ctx.get_dislikes(session_id)
-        adjusted = se.apply_substitutions(found, dislikes)
-        ctx.set_current_recipe(session_id, adjusted)
-        return {
-            "reply": f"Here's a recipe for {adjusted['name']}. Let me know dislikes!",
-            "recipe": adjusted,
-        }
+        if has_llm():
+            generated = _normalize_recipe(generate_recipe(recipe_name, list(dislikes)))
+            ctx.set_current_recipe(session_id, generated)
+            return {
+                "reply": f"Here's a recipe for {generated.get('name', recipe_name)}.",
+                "recipe": generated,
+            }
+        # Fallback: local data + substitution engine
+        found = rr.get_recipe_by_name(recipe_name)
+        if found:
+            adjusted = se.apply_substitutions(found, dislikes)
+            ctx.set_current_recipe(session_id, adjusted)
+            return {
+                "reply": f"Here's a recipe for {adjusted['name']} (local data).",
+                "recipe": adjusted,
+            }
+        return {"reply": f"Couldn't find a local recipe for '{recipe_name}'. Configure OPENAI_API_KEY for AI-generated recipes.", "recipe": None}
 
     # Fallback: mock LLM
     resp = ask_llm(message)
     return {"reply": resp.get("text", "I'm here to help with recipes!"), "recipe": None}
-
+def _normalize_recipe(data: Dict[str, Any]) -> Dict[str, Any]:
+    name = str(data.get("name", "recipe")).strip() or "recipe"
+    raw_ings = data.get("ingredients", []) or []
+    ingredients: List[Dict[str, str]] = []
+    for it in raw_ings:
+        if isinstance(it, dict):
+            n = it.get("name") or it.get("ingredient") or it.get("item") or "ingredient"
+            q = it.get("quantity") or it.get("qty") or ""
+            ingredients.append({"name": str(n), "quantity": str(q) if q is not None else ""})
+        elif isinstance(it, str):
+            ingredients.append({"name": it, "quantity": ""})
+    raw_steps = data.get("steps", [])
+    if isinstance(raw_steps, str):
+        steps = [s.strip() for s in raw_steps.split("\n") if s.strip()]
+    else:
+        steps = [str(s) for s in (raw_steps or [])]
+    return {"name": name, "ingredients": ingredients, "steps": steps}

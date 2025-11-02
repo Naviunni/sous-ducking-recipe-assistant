@@ -63,3 +63,74 @@ def ask_llm(
         return {"text": text or ""}
     except Exception as e:  # pragma: no cover - runtime/network errors
         return {"text": f"LLM error: {e}"}
+
+
+def has_llm() -> bool:
+    """Return True if the OpenAI client is available and configured."""
+    return _get_client() is not None
+
+
+def generate_recipe(recipe_name: str, dislikes: Optional[list] = None) -> Dict:
+    """Generate a recipe via LLM as structured JSON.
+
+    Returns a dict with keys: name, ingredients (list of {name, quantity}), steps (list[str]).
+    Falls back to a minimal stub if LLM unavailable.
+    """
+    import json, re
+
+    dislikes = dislikes or []
+    client = _get_client()
+    if not client:
+        # Fallback minimal structure (mock)
+        return {
+            "name": recipe_name.lower(),
+            "ingredients": [
+                {"name": "ingredient 1", "quantity": "1 unit"},
+                {"name": "ingredient 2", "quantity": "to taste"}
+            ],
+            "steps": [
+                f"Prepare the ingredients for {recipe_name}.",
+                "Cook and assemble as appropriate.",
+                "Serve warm."
+            ]
+        }
+
+    system = (
+        "You are a helpful cooking assistant. Generate concise, home-cook friendly recipes."
+    )
+    dislikes_text = ", ".join(dislikes) if dislikes else "none"
+    user = (
+        "Generate a complete recipe as compact JSON only. Schema: {\n"
+        "  \"name\": string,\n"
+        "  \"ingredients\": [ { \"name\": string, \"quantity\": string } ],\n"
+        "  \"steps\": [ string ]\n"
+        "}. Avoid markdown and extra commentary.\n"
+        f"Recipe: {recipe_name}. Exclude or replace these if possible: {dislikes_text}."
+    )
+
+    try:
+        resp = client.chat.completions.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o"),
+            temperature=0.3,
+            max_tokens=800,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            response_format={"type": "json_object"},
+        )
+        content = resp.choices[0].message.content if resp.choices else "{}"
+        try:
+            return json.loads(content)
+        except json.JSONDecodeError:
+            # Try to extract JSON substring
+            match = re.search(r"\{.*\}\s*$", content, re.DOTALL)
+            if match:
+                try:
+                    return json.loads(match.group(0))
+                except Exception:
+                    pass
+            # last resort minimal
+            return {"name": recipe_name, "ingredients": [], "steps": [content]}
+    except Exception as e:  # pragma: no cover - runtime/network errors
+        return {"name": recipe_name, "ingredients": [], "steps": [f"LLM error: {e}"]}

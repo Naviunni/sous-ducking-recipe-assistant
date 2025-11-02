@@ -34,7 +34,7 @@ export OPENAI_API_KEY=sk-...           # required for real calls
 export OPENAI_MODEL=gpt-4o             # optional (default: gpt-4o)
 ```
 
-Without `OPENAI_API_KEY`, the backend returns mock LLM replies.
+Without `OPENAI_API_KEY`, the backend returns mock replies and may use local recipes.
 
 ### Frontend
 
@@ -59,8 +59,8 @@ Open `http://localhost:5173`. The frontend points to `http://localhost:8000` by 
 
 - Framework: FastAPI
 - Endpoints:
-  - `POST /ask` → Conversational endpoint; returns reply text and optional recipe JSON
-  - `GET /recipes/{name}` → Fetch a recipe by name (local data for now)
+  - `POST /ask` → Conversational endpoint; LLM generates recipe JSON (name, ingredients, steps). Falls back to local data if no API key.
+  - `GET /recipes/{name}` → Fetch a recipe by name (local data)
   - `POST /substitute` → Suggest ingredient substitutions
 
 Modules:
@@ -69,7 +69,7 @@ Modules:
 - `backend/recipe_retrieval.py` — Fetch recipes from local `data/recipes.json` (extensible to APIs)
 - `backend/substitution_engine.py` — Rule-based substitutions + helpers to apply them
 - `backend/context_manager.py` — In-memory session context (current recipe, dislikes)
-- `backend/llm_interface.py` — Placeholder LLM wrapper returning mock responses
+- `backend/llm_interface.py` — OpenAI wrapper providing `ask_llm`, `generate_recipe`, `has_llm`
 - `backend/utils/logging_utils.py` — Lightweight structured logger
 
 ## Frontend Overview
