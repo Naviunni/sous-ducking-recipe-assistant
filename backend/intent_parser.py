@@ -1,4 +1,4 @@
-"""LLM-based intent parser for chat messages.
+"""Intent parsing (LLM-based).
 
 Maps free-form user utterances to structured intents so the backend can
 handle them deterministically.
