@@ -11,7 +11,7 @@ Requirements: Python 3.10+
 1. Create a virtual environment and install deps:
 
 ```
-cd recipe-assistant
+cd sous-ducking-recipe-assistant
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
