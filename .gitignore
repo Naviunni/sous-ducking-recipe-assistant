@@ -1,6 +1,6 @@
 frontend/node_modules/*
 
-**/__pycache__/
+/pycache/*
 /__pycache/*
 **/*.pyc
 
