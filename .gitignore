@@ -1,3 +1,24 @@
 frontend/node_modules/*
-backend/__pycache__/*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+/pycache/*
+/__pycache/*
+**/*.pyc
+
+# Virtual environments
+.venv/
+.env.*
+venv/
+
+# IDE/editor configs
+.vscode/
+.idea/
+
+# Python packaging
+dist/
+build/
+*.egg-info/
+
+# Ignore sensitive config files if any
 .env
