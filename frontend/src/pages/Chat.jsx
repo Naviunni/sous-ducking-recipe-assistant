@@ -30,7 +30,7 @@ export default function ChatPage() {
     <div className="ra-container mx-auto">
       <div className="row g-4">
         <div className="col-lg-6">
-          <div className="card-ra">
+          <div className="card-ra2">
             <div className="p-3 border-bottom"><h2 className="h5 m-0">Chat</h2></div>
             <ChatUI messages={messages} onSend={sendMessage} />
           </div>

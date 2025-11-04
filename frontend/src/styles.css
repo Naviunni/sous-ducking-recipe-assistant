@@ -153,6 +153,7 @@ body{
 .ra-chat-scroll{
   height:320px; overflow-y:auto; padding:12px; border-radius:12px;
   background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.52));
+  width: 90vw;
   border:1px solid rgba(11,18,39,0.04); backdrop-filter: blur(6px); z-index:1;
   display:block; /* changed to block to avoid parent flex interference */
 }
@@ -372,6 +373,11 @@ a, a:link, a:visited {
   position: relative;
   z-index: 2;
 }
+
+.card-ra2{
+  width: 80vw;
+}
+
 /* Ensure primary CTAs show white text */
 .btn-primary, .btn.btn-primary, a.btn-primary, a.btn.btn-primary { z-index: 5; color:#fff !important; background-color: #134686 !important; }
 
@@ -383,6 +389,12 @@ a, a:link, a:visited {
 
 .label {
   margin-right: 10px;
+}
+
+@media (min-width: 992px) {
+  .navbar-toggler {
+    display: none !important;
+  }
 }
 
 /* End of override block */
