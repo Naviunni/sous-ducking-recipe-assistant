@@ -1,4 +1,7 @@
 frontend/node_modules/*
+
 **/__pycache__/
+/__pycache/*
 **/*.pyc
+
 .env
