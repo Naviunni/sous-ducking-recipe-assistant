@@ -22,7 +22,6 @@ def _get_client():
     if _client is not None:
         return _client
     api_key = os.getenv("OPENAI_API_KEY")
-    print(api_key)
     if not api_key or OpenAI is None:
         _client = None
         return None
