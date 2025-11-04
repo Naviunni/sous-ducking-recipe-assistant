@@ -1,180 +1,383 @@
-/* Global modern, colorful styling */
+/* Updated stylesheet
+   - Restores spacing for main page boxes
+   - Forces blue buttons to display consistently (covers .btn/.button/.btn-primary/.btn-ra-primary)
+   - Adds padding for login cards specifically
+   - Improves chat layout (scroll behavior, message wrapping, alignment)
+   - Keeps your existing variables and overall visual language
+*/
 
-:root {
-  --ra-primary: #6b5bff; /* chic violet */
-  --ra-secondary: #ff7aa2; /* playful pink */
-  --ra-accent: #42d392; /* mint */
-  --ra-dark: #0f172a; /* slate */
-  --ra-light: #f8fafc; /* near white */
+/* Color tokens */
+:root{
+  --primary: #134686;    /* deep indigo (blue) */
+  --primary-2: #1a57b0;  /* lighter blue for gradients */
+  --accent: #ED3F27;     /* vibrant coral (orange-red) */
+  --accent-2: #f95b3b;
+  --sun: #FEB21A;        /* sunny yellow */
+  --bg-soft: #FDF4E3;    /* soft cream */
+  --muted: #6b7280;
+  --card-bg: rgba(255,255,255,0.95);
+  --shadow: 0 12px 36px rgba(19,70,134,0.08);
 }
 
-body {
-  color: var(--ra-dark);
-  background: radial-gradient(1200px 600px at -10% -10%, #ffe3ec 0%, transparent 60%),
-              radial-gradient(900px 500px at 110% 10%, #e0e7ff 0%, transparent 45%),
-              radial-gradient(1000px 500px at 30% 120%, #d1fae5 0%, transparent 50%),
-              linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  background-attachment: fixed;
+/* Base reset */
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #0f172a;
+  background:
+    radial-gradient(800px 500px at 6% 8%, rgba(19,70,134,0.06), transparent 20%),
+    radial-gradient(900px 420px at 92% 2%, rgba(237,63,39,0.04), transparent 18%),
+    linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+  padding:20px;
 }
 
-.ra-container {
+/* App container and main page spacing restored */
+.container{ max-width:1100px; margin:0 auto; display:flex; flex-direction:column; gap:22px; }
+/* If you use a main content grid/boxes on home, ensure consistent gutter */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* NAVBAR - keep markup, strengthen colors */
+.navbar{
+  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.88));
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(19,70,134,0.06);
+}
+
+/* Brand */
+.brand-logo{
+  width:44px; height:44px; border-radius:10px; overflow:hidden;
+  background: linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 10px 28px rgba(19,70,134,0.12);
+  transition: transform .28s cubic-bezier(.2,.9,.3,1);
+}
+.brand:hover .brand-logo{ transform: translateY(-4px) rotate(-4deg); }
+
+/* Brand text */
+.brand-title{ font-weight:700; font-size:16px; color:var(--primary); }
+.brand-sub{ font-size:12px; color:var(--muted); }
+
+/* BUTTONS — ensure blue buttons always show (covers various classnames) */
+.btn, .button, button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  border: none;
+  font-weight: 600;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+/* Primary (blue) button variants (explicit selectors to beat other libs) */
+.btn-primary, .btn.btn-primary, .button.btn-primary, .btn-ra-primary, .btn-primary:where(*) {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 26px rgba(19,70,134,0.12) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+}
+.btn-primary:hover,
+.btn-ra-primary:hover,
+.button.btn-primary:hover { transform: translateY(-2px); filter: brightness(0.96); }
+
+/* Accent/orange button */
+.btn-accent, .button--accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+  color: #fff !important;
+}
+
+/* Ghost / subtle */
+.btn-ghost{ background:transparent; color:var(--primary); border:1px solid rgba(19,70,134,0.06); }
+
+/* Page + card
+   Increase default card padding so login card and other cards have comfortable spacing.
+   Keep max-width conservative so layout spacing remains similar.
+*/
+.page{ display:flex; align-items:center; justify-content:center; min-height:70vh; }
+.card{
+  width:100%; max-width:560px; padding:28px; border-radius:14px;
+  background: var(--card-bg); box-shadow: var(--shadow); border:1px solid rgba(11,18,39,0.04);
+  position:relative; overflow:visible;
+}
+
+/* Ensure multiple cards on a page have space between them (main page spacing restored) */
+.card + .card { margin-top: 20px; }
+
+/* Decorative blobs - muted and less intrusive (unchanged) */
+.card::before,.card::after{ content:''; position:absolute; border-radius:50%; filter: blur(36px); opacity:0.45; pointer-events:none; z-index:0; }
+.card::before{ width:220px; height:220px; right:-60px; top:-60px; background: linear-gradient(135deg,var(--sun), rgba(254,178,26,0.14)); animation: floatY 10s ease-in-out infinite; }
+.card::after{ width:240px; height:240px; left:-90px; bottom:-90px; background: linear-gradient(135deg,var(--accent), rgba(237,63,39,0.12)); animation: floatX 12s ease-in-out infinite; }
+@keyframes floatY{ 0%{ transform: translateY(0) } 50%{ transform: translateY(10px) } 100%{ transform: translateY(0) } }
+@keyframes floatX{ 0%{ transform: translateX(0) } 50%{ transform: translateX(-10px) } 100%{ transform: translateX(0) } }
+
+/* Titles */
+.title{ margin:0 0 10px 0; font-size:42px; font-weight: 600; color:var(--primary); z-index:2; position:relative; }
+.subtitle{ margin:0 0 14px 0; color:var(--muted); font-size:14px; z-index:2; position:relative; }
+
+/* Forms
+   Ensure login card spacing is comfortable: target .login-page .card if you wrap the login page,
+   otherwise apply slightly larger padding on form container in cards.
+*/
+.login-page .card, .card .login-card {
+  padding: 32px !important;
+}
+
+/* Also make form containers inside cards have vertical spacing */
+.card .form { gap: 14px; }
+
+/* Inputs */
+.input{
+  padding:12px 14px; border-radius:10px; border:1px solid rgba(11,18,39,0.06);
+  background: linear-gradient(180deg,#fff,#fbfdff); outline:none; font-size:14px;
+  transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+}
+.input:focus{ border-color: var(--primary-2); box-shadow: 0 8px 28px rgba(19,70,134,0.08); transform: translateY(-1px); }
+
+/* Chat area improvements
+   - Make chat scroll independent and ensure messages stack vertically
+   - Prevent other flex rules from collapsing chat layout
+   - Ensure user messages align right and assistant left, and bubbles shrink/word-wrap
+*/
+.ra-chat-scroll{
+  height:320px; overflow-y:auto; padding:12px; border-radius:12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.52));
+  border:1px solid rgba(11,18,39,0.04); backdrop-filter: blur(6px); z-index:1;
+  display:block; /* changed to block to avoid parent flex interference */
+}
+.ra-chat-scroll .messages {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.msg{ display:flex; margin:0; width:100%; }
+.msg.user{ justify-content:flex-end; }
+.msg.assistant{ justify-content:flex-start; }
+.bubble{
+  display:inline-block;
+  max-width:78%; padding:12px 14px; border-radius:14px; white-space:pre-wrap;
+  box-shadow: 0 8px 26px rgba(11,18,39,0.06);
+  line-height:1.35; word-break: break-word;
+}
+
+/* stronger blue for user, orange for assistant highlight to match palette */
+.msg.user .bubble{
+  background: linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:white; border:1px solid rgba(0,0,0,0.06); align-self:flex-end;
+  transform-origin:100% 50%; animation: popIn .16s ease;
+}
+.msg.assistant .bubble{
+  background: linear-gradient(135deg, rgba(255,255,255,1), rgba(254,242,220,0.9));
+  border-left:4px solid var(--accent); color:var(--primary); animation: popIn .16s ease;
+}
+@keyframes popIn{ from{ transform: scale(.985); opacity:0 } to{ transform: scale(1); opacity:1 } }
+
+/* System tag sun color - ensure text contrast */
+.bubble .tag-sun{ display:inline-block; padding:4px 8px; border-radius:999px; background: linear-gradient(90deg,var(--sun), #ffd166); color:#0f172a; font-weight:700; margin-right:8px; font-size:12px; }
+
+/* Buttons + micro interactions (general) */
+.button{ border-radius:10px; padding:10px 12px; font-weight:700; border:none; transition: transform .12s ease, box-shadow .12s ease; }
+.button:hover{ transform: translateY(-3px); box-shadow: 0 12px 34px rgba(19,70,134,0.08); }
+
+/* Mixing bowl GIF container (small animated accent for chat) */
+.mixing-bowl-wrap{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width:72px;
+  height:72px;
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+  border:1px solid rgba(19,70,134,0.04);
+  box-shadow: 0 8px 20px rgba(19,70,134,0.06);
+  z-index:3;
+  animation: bob 6s ease-in-out infinite;
+}
+@keyframes bob{ 0%{ transform: translateY(0) } 50%{ transform: translateY(-6px) } 100%{ transform: translateY(0) } }
+.mixing-bowl-wrap img{ width:64px; height:64px; object-fit:cover; display:block; }
+
+/* Utilities */
+.row{ display:flex; gap:8px; align-items:center; }
+.link{ color:var(--primary); font-weight:600; cursor:pointer; }
+
+/* Responsive */
+@media (max-width:680px){
+  .card{ padding:18px; border-radius:12px }
+  .mixing-bowl-wrap{ display:none } /* hide GIF on small screens to save space */
+  .main-grid { gap: 12px; }
+}
+
+/* ===== Fixes & overrides — add this at the end of src/styles.css ===== */
+
+/* Ensure Bootstrap-style .row/.col grid behavior is preserved
+   (in case earlier rules set display:flex on parents or changed box-sizing) */
+.row, .g-4 {
+  --bs-gutter-x: 1.5rem; /* keep normal gutter */
+  --bs-gutter-y: 1.5rem;
+}
+.row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin-right: calc(-1 * var(--bs-gutter-x)) !important;
+  margin-left: calc(-1 * var(--bs-gutter-x)) !important;
+  gap: 0 !important; /* use column gutters */
+}
+.row > [class*="col-"] {
+  padding-right: var(--bs-gutter-x) !important;
+  padding-left: var(--bs-gutter-x) !important;
+  margin-bottom: var(--bs-gutter-y) !important;
+  box-sizing: border-box;
+}
+
+/* Make col-md-4 behave as expected */
+.col-md-4 {
+  flex: 0 0 auto;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .col-md-4 { width: 33.333333%; }
+}
+
+/* Ensure card-ra fills its column and the "h-100" utility works */
+.card-ra, .card-ra.h-100 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+  padding: 1.25rem; /* ensure padding, override missing padding issues */
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  z-index: 1;
+}
+
+/* If cards appear stacked 2 then 1, increasing the container max-width helps:
+   make sure your features container uses .ra-container or .container */
+.ra-container, .container {
   max-width: 1140px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* Hero with image overlay */
+/* Buttons: fix invisible button (text only on hover)
+   Force primary CTA styles across different classnames (.btn, .button, .btn-primary, .btn-ra-primary) */
+.btn, .button, button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.btn-primary,
+.btn.btn-primary,
+.button.btn-primary,
+.btn-ra-primary,
+.btn-primary:where(*) {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(19,70,134,0.12) !important;
+  border: 1px solid rgba(0,0,0,0.04) !important;
+}
+
+/* If you have a "Learn more" link rendered as <a>, ensure .btn or .link styling shows */
+a.btn, a.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  border-radius: 8px;
+}
+
+/* Chat: make container layout stable and expand to available width */
+.chat-wrapper, .chat-card, .ra-chat-scroll {
+  width: 100% !important;
+  min-width: 0; /* avoid overflow from flex items */
+}
+
+/* ra-chat-scroll should be block-level and have a clear stacking context */
+.ra-chat-scroll {
+  display: block !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* messages wrapper ensures vertical stacking */
+.ra-chat-scroll .messages { display: flex; flex-direction: column; gap: 12px; }
+
+/* Make bubble widths adapt and prevent overflow */
+.bubble {
+  max-width: 78%;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Ensure .h-100 behavior on parent containers preserves intended heights */
+.h-100 { height: 100% !important; }
+
+
 .ra-hero {
   background-image:
-    linear-gradient(180deg, rgba(15,23,42,0.35), rgba(15,23,42,0.35)),
+    linear-gradient(180deg, rgba(139, 187, 255, 0.55), rgba(139, 187, 255, 0.35)),
+    linear-gradient(180deg, rgba(255,242,204,0.02), rgba(255,242,204,0.00)),
     url('https://images.unsplash.com/photo-1542528180-a1208c5169a8?q=80&w=1600&auto=format&fit=crop');
   background-size: cover;
   background-position: center;
   color: #fff;
-  border-radius: 1rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(19,70,134,0.06);
 }
 
-.ra-hero h1 {
-  font-weight: 800;
+/* Ensure hero buttons use the light-blue CTA we designed */
+.ra-hero .btn-primary {
+  background: linear-gradient(135deg, #01539f 0%, #003681 100%) !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 20px rgba(19,70,134,0.08) !important;
 }
 
-/* Chat bubbles */
-.ra-chat-scroll {
-  height: 360px;
-  overflow-y: auto;
-  background: rgba(255,255,255,0.75);
+/* Small helper: visible fallback for links that become transparent on hover
+   If some rules were setting color: transparent on links, this forces readable color */
+a, a:link, a:visited {
+  color: var(--primary) !important;
+  opacity: 1 !important;
 }
 
-.msg {
-  display: flex;
-  margin: 8px 0;
-}
-.msg.user { justify-content: flex-end; }
-.msg.assistant { justify-content: flex-start; }
-
-.bubble {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-  white-space: pre-wrap;
-}
-.msg.user .bubble {
-  background: linear-gradient(135deg, var(--ra-primary), #8a7aff);
-  color: #fff;
-}
-.msg.assistant .bubble {
-  background: #ffffff;
+/* Login card padding (explicit) */
+.login-page .card, .card.login-card {
+  padding: 30px !important;
 }
 
-/* Fancy buttons override */
-.btn-ra-primary {
-  background: linear-gradient(135deg, var(--ra-primary), #8a7aff);
-  border: none;
+/* Protect CTA z-index so blobs don't cover buttons */
+.card, .card-ra, .ra-hero, .navbar {
+  position: relative;
+  z-index: 2;
 }
-.btn-ra-primary:hover { filter: brightness(0.95); }
+/* Ensure primary CTAs show white text */
+.btn-primary, .btn.btn-primary, a.btn-primary, a.btn.btn-primary { color:#fff !important; background-color: #134686 !important; }
 
-.card-ra {
-  border-radius: 1rem;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 24px rgba(17, 12, 46, 0.08);
-  background: rgba(255,255,255,0.9);
-}
+/* Chat sizing: 90% viewport width and centered */
+.ra-chat-scroll { width:90vw; max-width:1200px; margin:0 auto; box-sizing:border-box; }
 
-/* Simple modal */
-.ra-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
-  padding: 24px;
-}
-.ra-modal {
-  width: min(900px, 95vw);
-  max-height: 90vh;
-  overflow: auto;
-}
-
-/* Page layout */
-.page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-  padding: 2rem;
-  background: linear-gradient(180deg, #fffaf0, #fff);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-}
-
-/* Card */
-.card {
-  width: 100%;
-  max-width: 420px;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(12, 22, 31, 0.08);
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.04);
-}
-
-/* Titles */
-.title {
-  margin: 0 0 1.25rem 0;
-  font-size: 1.5rem;
-  color: #0f172a;
-}
-
-/* Form */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.875rem;
-  color: #334155;
-}
-
-.input {
-  margin-top: 0.4rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #e6e9ee;
-  background: #fbfdff;
-  outline: none;
-  font-size: 0.95rem;
-}
-
-.input:focus {
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.06);
-}
-
-.button {
-  margin-top: 0.4rem;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  border: none;
-  background: #7c3aed;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error {
-  color: #b91c1c;
-  background: #fee2e2;
-  padding: 0.5rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-}
+/* Make sure parent containers don't constrain chat width */
+.chat-wrapper, .chat-card { width:100% !important; max-width:none !important; }
+/* End of override block */
