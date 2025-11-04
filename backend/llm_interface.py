@@ -6,6 +6,7 @@ Falls back to a mock response if the package or API key is missing.
 
 from typing import Dict, Optional, Any
 import os
+from dotenv import load_dotenv
 
 try:  # keep a small guard for missing package
     from openai import OpenAI  # type: ignore
@@ -14,13 +15,14 @@ except Exception:  # pragma: no cover - package not installed
 
 
 _client = None
-
+load_dotenv()
 
 def _get_client():
     global _client
     if _client is not None:
         return _client
     api_key = os.getenv("OPENAI_API_KEY")
+    print(api_key)
     if not api_key or OpenAI is None:
         _client = None
         return None
