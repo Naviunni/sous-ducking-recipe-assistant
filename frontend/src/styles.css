@@ -373,11 +373,16 @@ a, a:link, a:visited {
   z-index: 2;
 }
 /* Ensure primary CTAs show white text */
-.btn-primary, .btn.btn-primary, a.btn-primary, a.btn.btn-primary { color:#fff !important; background-color: #134686 !important; }
+.btn-primary, .btn.btn-primary, a.btn-primary, a.btn.btn-primary { z-index: 5; color:#fff !important; background-color: #134686 !important; }
 
 /* Chat sizing: 90% viewport width and centered */
 .ra-chat-scroll { width:90vw; max-width:1200px; margin:0 auto; box-sizing:border-box; }
 
 /* Make sure parent containers don't constrain chat width */
 .chat-wrapper, .chat-card { width:100% !important; max-width:none !important; }
+
+.label {
+  margin-right: 10px;
+}
+
 /* End of override block */

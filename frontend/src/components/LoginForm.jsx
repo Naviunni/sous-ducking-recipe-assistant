@@ -60,7 +60,7 @@ export default function LoginForm() {
         </button>
         <button
           type="button"
-          className="button btn-ghost"
+          className="button btn-primary"
           onClick={() => {
             setIdentifier("john@example.com");
             setPassword("password123");
