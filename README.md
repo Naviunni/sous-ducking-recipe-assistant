@@ -11,7 +11,7 @@ Requirements: Python 3.10+
 1. Create a virtual environment and install deps:
 
 ```
-cd recipe-assistant
+cd sous-ducking-recipe-assistant
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -27,11 +27,11 @@ The API will be available at `http://localhost:8000`.
 
 3. Enable real LLM responses (OpenAI GPT-4o):
 
-Set your API key and optionally the model/base URL, then restart the server.
+Set your API key in .env and optionally the model/base URL, then restart the server.
 
 ```
-export OPENAI_API_KEY=sk-...           # required for real calls
-export OPENAI_MODEL=gpt-4o             # optional (default: gpt-4o)
+OPENAI_API_KEY=sk-...           # required for real calls
+OPENAI_MODEL=gpt-4o             # optional (default: gpt-4o)
 ```
 
 Without `OPENAI_API_KEY`, the backend returns mock replies and may use local recipes.
