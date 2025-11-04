@@ -35,3 +35,8 @@ export function getProfile() {
     return null;
   }
 }
+
+export function signOut() {
+  localStorage.removeItem("sous_token");
+  localStorage.removeItem("sous_profile");
+}

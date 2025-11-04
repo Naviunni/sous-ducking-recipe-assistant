@@ -5,7 +5,8 @@ export default function Login() {
   return (
     <div className="page">
       <div className="card">
-        <h1 className="title">Sign in</h1>
+        <h1 className="title">Welcome back 👋</h1>
+        <p className="subtitle">Sign in to save preferences, grocery lists and personalized recipes.</p>
         <LoginForm />
       </div>
     </div>
