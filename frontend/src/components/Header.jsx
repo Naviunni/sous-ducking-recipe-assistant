@@ -55,14 +55,14 @@ export default function Header() {
             {/* auth area */}
             {profile ? (
               <>
-                <li className="nav-item d-flex align-items-center">
+                {/* <li className="nav-item d-flex align-items-center">
                   <div style={{ marginRight: 8, fontWeight: 600 }}>{profile.name}</div>
-                </li>
+                </li> */}
                 <li className="nav-item">
                   <button
                     className="btn btn-ra-primary"
                     onClick={handleSignOut}
-                    style={{ marginLeft: 8, borderRadius: 10, padding: "8px 12px", color: "#fff" }}
+                    style={{ margin: 0, borderRadius: 10, padding: "8px 12px", color: "#fff" }}
                     aria-label="Sign out"
                   >
                     Sign out
