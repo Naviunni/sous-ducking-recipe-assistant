@@ -17,7 +17,28 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-2. Run the backend (FastAPI + Uvicorn):
+2. Database Setup (PostgreSQL):
+Install PostgreSQL if you haven't already.
+Create the database in PostgreSQL:
+```
+createdb sous_duckling_db
+```
+
+Configure Environment: 
+Create a .env file in the project root directory. Add your database URL
+Note: Use the format below, replacing YOUR_PASSWORD with your actual local DB password
+```
+# Format: postgresql+asyncpg://user:password@host/dbname
+DATABASE_URL="postgresql+asyncpg://postgres:YOUR_PASSWORD@localhost/sous_duckling_db"
+```
+
+Run Migrations: Apply the database schema using Alembic
+```
+cd backend
+alembic upgrade head
+```
+
+3. Run the backend (FastAPI + Uvicorn):
 
 ```
 uvicorn backend.app:app --reload
@@ -25,8 +46,7 @@ uvicorn backend.app:app --reload
 
 The API will be available at `http://localhost:8000`.
 
-3. Enable real LLM responses (OpenAI GPT-4o):
-Create a .env file in project directory.
+4. Enable real LLM responses (OpenAI GPT-4o):
 Set your API key in .env and optionally the model/base URL, then restart the server.
 
 ```
