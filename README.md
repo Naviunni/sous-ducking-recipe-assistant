@@ -26,7 +26,7 @@ uvicorn backend.app:app --reload
 The API will be available at `http://localhost:8000`.
 
 3. Enable real LLM responses (OpenAI GPT-4o):
-
+Create a .env file in project directory.
 Set your API key in .env and optionally the model/base URL, then restart the server.
 
 ```
