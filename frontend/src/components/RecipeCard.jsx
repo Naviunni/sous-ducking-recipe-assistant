@@ -23,7 +23,7 @@ export default function RecipeCard({ recipe }) {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="h4 mb-0">{recipe.name}</h2>
-        <button type="button" onClick={toggleSave} className={`btn ${saved ? 'btn-danger' : 'btn-outline-danger'} btn-sm`} title={saved ? 'Remove from saved' : 'Save recipe'}>
+        <button type="button" onClick={toggleSave} className={`btn ${saved ? 'btn-danger' : 'btn-danger'} btn-sm`} title={saved ? 'Remove from saved' : 'Save recipe'}>
           {saved ? (
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>
           ) : (
