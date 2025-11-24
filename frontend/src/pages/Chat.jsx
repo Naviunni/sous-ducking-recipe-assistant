@@ -49,7 +49,6 @@ export default function ChatPage() {
               </div>
             ) : (
               <div className="recipe-placeholder">
-                {/* simple inline SVG icon so no extra asset required */}
                 <svg className="recipe-placeholder-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <path d="M12 2a2 2 0 0 0-2 2v1H7a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7a2 2 0 0 0-2-2h-3V4a2 2 0 0 0-2-2h-2zM9 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1H9V5zm-1 8h8v2H8v-2zm0-4h8v2H8V9z" />
                 </svg>

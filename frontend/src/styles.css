@@ -552,7 +552,6 @@ button {
   border: 1px solid rgba(0, 0, 0, 0.04) !important;
 }
 
-/* If you have a "Learn more" link rendered as <a>, ensure .btn or .link styling shows */
 a.btn,
 a.button {
   display: inline-flex;
