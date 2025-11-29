@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Chat from './components/Chat';  
 import Saved from './components/Saved';
 import Explore from './components/Explore';
+import Grocery from './components/Grocery';
 
 export default function App(props) {
   return (
@@ -25,6 +26,7 @@ export default function App(props) {
           <Route path="/chat" element={<Chat />} />
           <Route path="/saved" element={<Saved />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/grocery" element={<Grocery />} />
         </Routes>
       </Container>
     </AppTheme>

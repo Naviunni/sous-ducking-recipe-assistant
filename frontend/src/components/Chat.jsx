@@ -5,7 +5,7 @@ import { ask } from '../lib/api';
 import { getSessionId } from '../lib/session';
 import { Box, Grid, Typography } from '@mui/material';
 
-export default function ChatPage() {
+export default function Chat() {
   const sessionId = useMemo(() => getSessionId(), []);
   const [messages, setMessages] = useState([
     {
