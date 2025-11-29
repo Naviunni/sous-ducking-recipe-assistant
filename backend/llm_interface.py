@@ -7,7 +7,6 @@ Falls back to a mock response if the package or API key is missing.
 from typing import Dict, Optional, Any
 import os
 from dotenv import load_dotenv
-from dotenv import load_dotenv
 
 try:  # keep a small guard for missing package
     from openai import OpenAI  # type: ignore

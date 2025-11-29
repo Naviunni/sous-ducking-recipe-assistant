@@ -1,14 +1,4 @@
-import React from 'react';
-  
-  const ThemePrimitives = () =>  {
-	return (
-	  <div>
-	  </div>
-	);
-  }
-  
-  export default ThemePrimitives;
-  import { createTheme, alpha } from '@mui/material/styles';
+import { createTheme, alpha } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
 
