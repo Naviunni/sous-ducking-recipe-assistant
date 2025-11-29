@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { signInMock, getProfile } from "../utils/app";
+import { signInMock } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 
+import {
+  Box,
+  TextField,
+  Button,
+  Alert,
+  Stack,
+} from "@mui/material";
 
 export default function LoginForm() {
   const [identifier, setIdentifier] = useState("");
@@ -14,9 +21,9 @@ export default function LoginForm() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
     try {
       await signInMock(identifier, password);
-      // small success animation (setTimeout allows css hover/active to settle)
       setTimeout(() => navigate("/", { replace: true }), 220);
     } catch (err) {
       setError(err?.message || "Sign in failed");
@@ -26,50 +33,68 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form" aria-label="login form">
-      <div>
-        <label className="label">Email or username</label>
-        <input
-          className="input"
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <Stack spacing={2}>
+        {/* Email / Username */}
+        <TextField
+          label="Email or username"
+          fullWidth
+          required
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
           placeholder="you@example.com"
-          required
           autoComplete="username"
         />
-      </div>
 
-      <div>
-        <label className="label">Password</label>
-        <input
-          className="input"
+        {/* Password */}
+        <TextField
+          label="Password"
+          fullWidth
+          required
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter password"
-          required
           autoComplete="current-password"
         />
-      </div>
 
-      {error && <div className="error" role="alert">{error}</div>}
+        {/* Error Alert */}
+        {error && (
+          <Alert severity="error" sx={{ mt: 1 }}>
+            {error}
+          </Alert>
+        )}
 
-      <div style={{ display: "flex", gap: 8, marginTop: 6, alignItems: "center" }}>
-        <button className="button btn-primary" type="submit" disabled={loading}>
-          {loading ? "Signing in..." : "Sign in"}
-        </button>
-        <button
-          type="button"
-          className="button btn-primary"
-          onClick={() => {
-            setIdentifier("john@example.com");
-            setPassword("password123");
-          }}
-          title="Fill demo credentials"
-        >
-          Demo
-        </button>
-      </div>
-    </form>
+        {/* Buttons */}
+        <Stack direction="row" spacing={2} mt={1}>
+          <Button
+            variant="contained"
+            fullWidth
+            type="submit"
+            disabled={loading}
+            sx={{
+              bgcolor: "#FF8A00",
+              "&:hover": { bgcolor: "#e67a00" },
+              fontWeight: 600,
+            }}
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </Button>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => {
+              setIdentifier("john@example.com");
+              setPassword("password123");
+            }}
+            title="Fill demo credentials"
+            sx={{ fontWeight: 600 }}
+          >
+            Demo
+          </Button>
+        </Stack>
+      </Stack>
+    </Box>
   );
 }
