@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { getToken, getProfile, signOut } from "../utils/auth.js";
 import { alpha, styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -38,6 +39,9 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 
 export default function AppAppBar() {
   const [open, setOpen] = React.useState(false);
+  const token = getToken();
+  const profile = getProfile();
+  const navigate = useNavigate();
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -147,12 +151,37 @@ export default function AppAppBar() {
               alignItems: 'center',
             }}
           >
-            <Button color="primary" variant="text" size="small">
-              Sign in
-            </Button>
-            <Button color="primary" variant="contained" size="small">
-              Sign up
-            </Button>
+            {!token ? (
+              <>
+                <Button
+                  component={Link}
+                  to="/login"
+                  color="primary"
+                  variant="contained"
+                  size="small"
+                >
+                  Sign in
+                </Button>
+              </>
+            ) : (
+              <>
+                <span style={{ fontSize: 14, opacity: 0.8 }}>
+                  Hi, {profile?.name?.split(" ")[0]} 👋
+                </span>
+
+                <Button
+                  color="error"
+                  variant="outlined"
+                  size="small"
+                  onClick={() => {
+                    signOut();
+                    window.location.reload();
+                  }}
+                >
+                  Sign out
+                </Button>
+              </>
+            )}
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
             <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
@@ -210,16 +239,50 @@ export default function AppAppBar() {
                   Grocery
                 </MenuItem>
                 <Divider sx={{ my: 3 }} />
-                <MenuItem>
-                  <Button color="primary" variant="contained" fullWidth>
-                    Sign up
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button color="primary" variant="outlined" fullWidth>
-                    Sign in
-                  </Button>
-                </MenuItem>
+
+                  {!token ? (
+                    <>
+                      <MenuItem>
+                        <Button
+                          component={Link}
+                          to="/signup"
+                          color="primary"
+                          variant="contained"
+                          fullWidth
+                        >
+                          Sign up
+                        </Button>
+                      </MenuItem>
+
+                      <MenuItem>
+                        <Button
+                          component={Link}
+                          to="/login"
+                          color="primary"
+                          variant="outlined"
+                          fullWidth
+                        >
+                          Sign in
+                        </Button>
+                      </MenuItem>
+                    </>
+                  ) : (
+                    <MenuItem>
+                      <Button
+                        color="error"
+                        variant="outlined"
+                        fullWidth
+                        onClick={() => {
+                          signOut();
+                          window.location.reload();
+                          setOpen(false);
+                        }}
+                      >
+                        Sign out
+                      </Button>
+                    </MenuItem>
+                  )}
+
               </Box>
             </Drawer>
           </Box>

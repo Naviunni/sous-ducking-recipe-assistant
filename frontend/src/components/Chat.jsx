@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import ChatUI from './ChatUI';
 import RecipeCard from './RecipeCard';
-import { ask } from '../lib/api';
-import { getSessionId } from '../lib/session';
+import { ask } from '../utils/api';
+import { getSessionId } from '../utils/session';
 import { Box, Grid, Typography } from '@mui/material';
 
 export default function Chat() {
