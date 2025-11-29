@@ -35,7 +35,7 @@ export default function ChatPage() {
   }
 
   return (
-    <Box sx={{ maxWidth: '1200px', width: '100%', mx: 'auto', mt: 4 }}>
+    <Box sx={{ maxWidth: '1200px', width: '100%', mx: 'auto', mt: 2 }}>
       
       {/* Header */}
       <Box sx={{ mb: 3 }}>
@@ -44,7 +44,7 @@ export default function ChatPage() {
         </Typography>
         <Typography>
           Ask away, chef! I've got recipes to share, ingredients to adjust,
-          and culinary magic to help you whip up something delicious.
+          and culinary magic to help you whip up something delicious. 💛
         </Typography>
       </Box>
 

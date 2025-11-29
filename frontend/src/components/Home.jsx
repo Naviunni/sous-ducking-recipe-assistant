@@ -87,7 +87,7 @@ export default function Home() {
         <Typography variant="h1" gutterBottom>
           Cook smarter with <font color="#FF8A00">Sous Duckling</font>
         </Typography>
-        <Typography>I'm your tiny duckling sous-chef. Tell me what you're craving, and I'll fetch the perfect recipe, tweak the flavors, and guide you every step of the way.</Typography>
+        <Typography>I'm your tiny duckling sous-chef. Tell me what you're craving, and I'll fetch the perfect recipe, tweak the flavors, and guide you every step of the way. 💛</Typography>
       </div>
 
       <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>

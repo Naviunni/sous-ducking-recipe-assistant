@@ -102,16 +102,6 @@ export const getDesignTokens = (mode) => {
           dark: brand[900],
         }),
       },
-      warning: {
-        light: orange[300],
-        main: orange[400],
-        dark: orange[800],
-        ...(mode === 'dark' && {
-          light: orange[400],
-          main: orange[500],
-          dark: orange[700],
-        }),
-      },
       error: {
         light: red[300],
         main: red[400],
@@ -144,7 +134,6 @@ export const getDesignTokens = (mode) => {
       text: {
         primary: gray[800],
         secondary: gray[600],
-        warning: orange[400],
         ...(mode === 'dark' && {
           primary: 'hsl(0, 0%, 100%)',
           secondary: gray[400],
@@ -230,11 +219,6 @@ export const colorSchemes = {
         dark: brand[600],
         contrastText: gray[50],
       },
-      warning: {
-        light: orange[300],
-        main: orange[400],
-        dark: orange[800],
-      },
       error: {
         light: red[300],
         main: red[400],
@@ -256,7 +240,6 @@ export const colorSchemes = {
       text: {
         primary: gray[800],
         secondary: gray[600],
-        warning: orange[400],
       },
       action: {
         hover: alpha(gray[200], 0.2),
@@ -279,11 +262,6 @@ export const colorSchemes = {
         light: brand[500],
         main: brand[700],
         dark: brand[900],
-      },
-      warning: {
-        light: orange[400],
-        main: orange[500],
-        dark: orange[700],
       },
       error: {
         light: red[400],
