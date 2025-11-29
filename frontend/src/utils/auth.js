@@ -1,4 +1,14 @@
-const MOCK_USERS = {
+import React from 'react';
+  
+  const Auth = () =>  {
+	return (
+	  <div>
+	  </div>
+	);
+  }
+  
+  export default Auth;
+  const MOCK_USERS = {
   john: {
     password: "password123",
     profile: { id: "1", name: "John Doe", email: "john@example.com" },
