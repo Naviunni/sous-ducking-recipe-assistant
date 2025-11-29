@@ -7,6 +7,7 @@ import AppAppBar from './components/AppAppBar';
 import Home from './components/Home';
 import Chat from './components/Chat';  
 import Saved from './components/Saved';
+import Explore from './components/Explore';
 
 export default function App(props) {
   return (
@@ -23,6 +24,7 @@ export default function App(props) {
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/saved" element={<Saved />} />
+          <Route path="/explore" element={<Explore />} />
         </Routes>
       </Container>
     </AppTheme>
