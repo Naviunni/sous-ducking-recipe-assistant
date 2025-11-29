@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
-import ChatUI from '../components/ChatUI.jsx'
-import RecipeCard from '../components/RecipeCard.jsx'
+import ChatUI from './ChatUI.jsx'
+import RecipeCard from './RecipeCard.jsx'
 import { ask } from '../lib/api.js'
 import { getSessionId } from '../lib/session.js'
 

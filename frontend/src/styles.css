@@ -8,14 +8,14 @@
   --ra-light: #f8fafc; /* near white */
 }
 
-body {
+/* body {
   color: var(--ra-dark);
   background: radial-gradient(1200px 600px at -10% -10%, #ffe3ec 0%, transparent 60%),
               radial-gradient(900px 500px at 110% 10%, #e0e7ff 0%, transparent 45%),
               radial-gradient(1000px 500px at 30% 120%, #d1fae5 0%, transparent 50%),
               linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   background-attachment: fixed;
-}
+} */
 
 .ra-container {
   max-width: 1140px;
