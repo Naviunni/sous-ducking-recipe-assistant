@@ -1,4 +1,14 @@
-const KEY = 'saved_recipes_v1'
+import React from 'react';
+  
+  const Saved = () =>  {
+	return (
+	  <div>
+	  </div>
+	);
+  }
+  
+  export default Saved;
+  const KEY = 'saved_recipes_v1'
 
 function read() {
   try {

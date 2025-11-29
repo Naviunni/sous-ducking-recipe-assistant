@@ -152,17 +152,15 @@ export default function AppAppBar() {
             }}
           >
             {!token ? (
-              <>
-                <Button
-                  component={Link}
-                  to="/login"
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                >
-                  Sign in
-                </Button>
-              </>
+              <Button
+                component={Link}
+                to="/login"
+                color="primary"
+                variant="contained"
+                size="small"
+              >
+                Sign in
+              </Button>        
             ) : (
               <>
                 <span style={{ fontSize: 14, opacity: 0.8 }}>
@@ -241,31 +239,17 @@ export default function AppAppBar() {
                 <Divider sx={{ my: 3 }} />
 
                   {!token ? (
-                    <>
-                      <MenuItem>
-                        <Button
-                          component={Link}
-                          to="/signup"
-                          color="primary"
-                          variant="contained"
-                          fullWidth
-                        >
-                          Sign up
-                        </Button>
-                      </MenuItem>
-
-                      <MenuItem>
-                        <Button
-                          component={Link}
-                          to="/login"
-                          color="primary"
-                          variant="outlined"
-                          fullWidth
-                        >
-                          Sign in
-                        </Button>
-                      </MenuItem>
-                    </>
+                    <MenuItem>
+                      <Button
+                        component={Link}
+                        to="/login"
+                        color="primary"
+                        variant="contained"
+                        fullWidth
+                      >
+                        Sign in
+                      </Button>
+                    </MenuItem>
                   ) : (
                     <MenuItem>
                       <Button

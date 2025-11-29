@@ -1,4 +1,14 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
+import React from 'react';
+  
+  const Api = () =>  {
+	return (
+	  <div>
+	  </div>
+	);
+  }
+  
+  export default Api;
+  const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000'
 
 export async function ask(message, sessionId) {
   const res = await fetch(`${API_BASE}/ask`, {
