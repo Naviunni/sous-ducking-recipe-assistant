@@ -7,11 +7,12 @@ export default function Home() {
       <section className="ra-hero p-5 p-md-6 mb-4">
         <div className="row align-items-center">
           <div className="col-lg-7">
-            <h1 className="display-5">Cook Smarter with Sous Duckling</h1>
-            <p className="lead mb-4">Your ultimate recipe companion. Ask for any dish, get tailored ingredients and steps, and adapt to dislikes on the fly.</p>
+            <h1 className="display-5 title">Cook Smarter with Sous Duckling</h1>
+            <p className="lead mb-4 subtitle">Your ultimate recipe companion. Ask for any dish, get tailored ingredients and steps, and adapt to dislikes on the fly.</p>
             <div className="d-flex gap-2">
-              <Link to="/chat" className="btn btn-ra-primary btn-lg">Start Chatting</Link>
-              <a className="btn btn-outline-light btn-lg" href="#features">Learn More</a>
+              {/* Start Chatting and Learn More both navigate to /chat and use visible blue CTA with white text */}
+              <Link to="/chat" className="btn btn-primary btn-lg">Start Chatting</Link>
+              <Link to="/chat" className="btn btn-primary btn-lg">Learn More</Link>
             </div>
           </div>
         </div>

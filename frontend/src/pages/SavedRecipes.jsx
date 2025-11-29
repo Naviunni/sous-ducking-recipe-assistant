@@ -42,7 +42,7 @@ function List({ items, onRemove }) {
             <div className="card-ra p-3 h-100" role="button" onClick={() => setSelected(r)}>
               <div className="d-flex justify-content-between align-items-center mb-2">
                 <h2 className="h5 m-0">{r.name}</h2>
-                <button className="btn btn-sm btn-outline-danger" onClick={(e) => { e.stopPropagation(); onRemove(r.name) }}>Remove</button>
+                <button className="btn btn-sm btn-danger" onClick={(e) => { e.stopPropagation(); onRemove(r.name) }}>Remove</button>
               </div>
               <div className="small text-muted mb-2">Saved {new Date(r.savedAt).toLocaleString()}</div>
               <div className="row g-2">

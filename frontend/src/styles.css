@@ -1,98 +1,849 @@
-/* Global modern, colorful styling */
+/* Updated stylesheet
+   - Restores spacing for main page boxes
+   - Forces blue buttons to display consistently (covers .btn/.button/.btn-primary/.btn-ra-primary)
+   - Adds padding for login cards specifically
+   - Improves chat layout (scroll behavior, message wrapping, alignment)
+   - Keeps your existing variables and overall visual language
+*/
 
+/* Color tokens */
 :root {
-  --ra-primary: #6b5bff; /* chic violet */
-  --ra-secondary: #ff7aa2; /* playful pink */
-  --ra-accent: #42d392; /* mint */
-  --ra-dark: #0f172a; /* slate */
-  --ra-light: #f8fafc; /* near white */
+  --primary: #134686;
+  /* deep indigo (blue) */
+  --primary-2: #1a57b0;
+  /* lighter blue for gradients */
+  --accent: #ED3F27;
+  /* vibrant coral (orange-red) */
+  --accent-2: #f95b3b;
+  --sun: #FEB21A;
+  /* sunny yellow */
+  --bg-soft: #FDF4E3;
+  /* soft cream */
+  --muted: #6b7280;
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --shadow: 0 12px 36px rgba(19, 70, 134, 0.08);
+}
+
+/* Base reset */
+* {
+  box-sizing: border-box
+}
+
+html,
+body,
+#root {
+  height: 100%
 }
 
 body {
-  color: var(--ra-dark);
-  background: radial-gradient(1200px 600px at -10% -10%, #ffe3ec 0%, transparent 60%),
-              radial-gradient(900px 500px at 110% 10%, #e0e7ff 0%, transparent 45%),
-              radial-gradient(1000px 500px at 30% 120%, #d1fae5 0%, transparent 50%),
-              linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-  background-attachment: fixed;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  color: #0f172a;
+  background:
+    radial-gradient(800px 500px at 6% 8%, rgba(19, 70, 134, 0.06), transparent 20%),
+    radial-gradient(900px 420px at 92% 2%, rgba(237, 63, 39, 0.04), transparent 18%),
+    linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+  padding: 20px;
 }
 
-.ra-container {
-  max-width: 1140px;
+/* App container and main page spacing restored */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-/* Hero with image overlay */
-.ra-hero {
-  background-image:
-    linear-gradient(180deg, rgba(15,23,42,0.35), rgba(15,23,42,0.35)),
-    url('https://images.unsplash.com/photo-1542528180-a1208c5169a8?q=80&w=1600&auto=format&fit=crop');
-  background-size: cover;
-  background-position: center;
-  color: #fff;
-  border-radius: 1rem;
+/* If you use a main content grid/boxes on home, ensure consistent gutter */
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  align-items: start;
 }
 
-.ra-hero h1 {
-  font-weight: 800;
+/* NAVBAR - keep markup, strengthen colors */
+.navbar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.88));
+  border-radius: 12px;
+  padding: 8px 12px;
+  border: 1px solid rgba(19, 70, 134, 0.06);
 }
 
-/* Chat bubbles */
+/* Brand */
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(19, 70, 134, 0.12);
+  transition: transform .28s cubic-bezier(.2, .9, .3, 1);
+}
+
+.brand:hover .brand-logo {
+  transform: translateY(-4px) rotate(-4deg);
+}
+
+/* Brand text */
+.brand-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--primary);
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* BUTTONS — ensure blue buttons always show (covers various classnames) */
+.btn,
+.button,
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  border: none;
+  font-weight: 600;
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+/* Primary (blue) button variants (explicit selectors to beat other libs) */
+.btn-primary,
+.btn.btn-primary,
+.button.btn-primary,
+.btn-ra-primary,
+.btn-primary:where(*) {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 26px rgba(19, 70, 134, 0.12) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.btn-primary:hover,
+.btn-ra-primary:hover,
+.button.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.96);
+}
+
+/* Accent/orange button */
+.btn-accent,
+.button--accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+  color: #fff !important;
+}
+
+/* Ghost / subtle */
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid rgba(19, 70, 134, 0.06);
+}
+
+/* Page + card
+   Increase default card padding so login card and other cards have comfortable spacing.
+   Keep max-width conservative so layout spacing remains similar.
+*/
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.card {
+  width: 100%;
+  max-width: 560px;
+  padding: 28px;
+  border-radius: 14px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(11, 18, 39, 0.04);
+  position: relative;
+  overflow: visible;
+}
+
+/* Ensure multiple cards on a page have space between them (main page spacing restored) */
+.card+.card {
+  margin-top: 20px;
+}
+
+/* Decorative blobs - muted and less intrusive (unchanged) */
+.card::before,
+.card::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(36px);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card::before {
+  width: 220px;
+  height: 220px;
+  right: -60px;
+  top: -60px;
+  background: linear-gradient(135deg, var(--sun), rgba(254, 178, 26, 0.14));
+  animation: floatY 10s ease-in-out infinite;
+}
+
+.card::after {
+  width: 240px;
+  height: 240px;
+  left: -90px;
+  bottom: -90px;
+  background: linear-gradient(135deg, var(--accent), rgba(237, 63, 39, 0.12));
+  animation: floatX 12s ease-in-out infinite;
+}
+
+@keyframes floatY {
+  0% {
+    transform: translateY(0)
+  }
+
+  50% {
+    transform: translateY(10px)
+  }
+
+  100% {
+    transform: translateY(0)
+  }
+}
+
+@keyframes floatX {
+  0% {
+    transform: translateX(0)
+  }
+
+  50% {
+    transform: translateX(-10px)
+  }
+
+  100% {
+    transform: translateX(0)
+  }
+}
+
+/* Titles */
+.title {
+  margin: 0 0 10px 0;
+  font-size: 42px;
+  font-weight: 600;
+  color: var(--primary);
+  z-index: 2;
+  position: relative;
+}
+
+.subtitle {
+  margin: 0 0 14px 0;
+  color: var(--muted);
+  font-size: 14px;
+  z-index: 2;
+  position: relative;
+}
+
+/* Forms
+   Ensure login card spacing is comfortable: target .login-page .card if you wrap the login page,
+   otherwise apply slightly larger padding on form container in cards.
+*/
+.login-page .card,
+.card .login-card {
+  padding: 32px !important;
+}
+
+/* Also make form containers inside cards have vertical spacing */
+.card .form {
+  gap: 14px;
+}
+
+/* Inputs */
+.input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(11, 18, 39, 0.06);
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  outline: none;
+  font-size: 14px;
+  transition: box-shadow .12s ease, border-color .12s ease, transform .08s ease;
+}
+
+.input:focus {
+  border-color: var(--primary-2);
+  box-shadow: 0 8px 28px rgba(19, 70, 134, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Chat area improvements
+   - Make chat scroll independent and ensure messages stack vertically
+   - Prevent other flex rules from collapsing chat layout
+   - Ensure user messages align right and assistant left, and bubbles shrink/word-wrap
+*/
 .ra-chat-scroll {
-  height: 360px;
+  height: 320px;
   overflow-y: auto;
-  background: rgba(255,255,255,0.75);
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.52));
+  width: 90vw;
+  border: 1px solid rgba(11, 18, 39, 0.04);
+  backdrop-filter: blur(6px);
+  z-index: 1;
+  display: block;
+  /* changed to block to avoid parent flex interference */
+}
+
+.ra-chat-scroll .messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .msg {
   display: flex;
-  margin: 8px 0;
+  margin: 0;
+  width: 100%;
 }
-.msg.user { justify-content: flex-end; }
-.msg.assistant { justify-content: flex-start; }
+
+.msg.user {
+  justify-content: flex-end;
+}
+
+.msg.assistant {
+  justify-content: flex-start;
+}
 
 .bubble {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  display: inline-block;
+  max-width: 78%;
+  padding: 12px 14px;
+  border-radius: 14px;
   white-space: pre-wrap;
+  box-shadow: 0 8px 26px rgba(11, 18, 39, 0.06);
+  line-height: 1.35;
+  word-break: break-word;
 }
+
+/* stronger blue for user, orange for assistant highlight to match palette */
 .msg.user .bubble {
-  background: linear-gradient(135deg, var(--ra-primary), #8a7aff);
-  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  align-self: flex-end;
+  transform-origin: 100% 50%;
+  animation: popIn .16s ease;
 }
+
 .msg.assistant .bubble {
-  background: #ffffff;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(254, 242, 220, 0.9));
+  border-left: 4px solid var(--accent);
+  color: var(--primary);
+  animation: popIn .16s ease;
 }
 
-/* Fancy buttons override */
-.btn-ra-primary {
-  background: linear-gradient(135deg, var(--ra-primary), #8a7aff);
+@keyframes popIn {
+  from {
+    transform: scale(.985);
+    opacity: 0
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1
+  }
+}
+
+/* System tag sun color - ensure text contrast */
+.bubble .tag-sun {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--sun), #ffd166);
+  color: #0f172a;
+  font-weight: 700;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+/* Buttons + micro interactions (general) */
+.button {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 700;
   border: none;
-}
-.btn-ra-primary:hover { filter: brightness(0.95); }
-
-.card-ra {
-  border-radius: 1rem;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 6px 24px rgba(17, 12, 46, 0.08);
-  background: rgba(255,255,255,0.9);
+  transition: transform .12s ease, box-shadow .12s ease;
 }
 
-/* Simple modal */
-.ra-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
+.button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 34px rgba(19, 70, 134, 0.08);
+}
+
+/* Mixing bowl GIF container (small animated accent for chat) */
+.mixing-bowl-wrap {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1050;
-  padding: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+  border: 1px solid rgba(19, 70, 134, 0.04);
+  box-shadow: 0 8px 20px rgba(19, 70, 134, 0.06);
+  z-index: 3;
+  animation: bob 6s ease-in-out infinite;
 }
-.ra-modal {
-  width: min(900px, 95vw);
-  max-height: 90vh;
-  overflow: auto;
+
+@keyframes bob {
+  0% {
+    transform: translateY(0)
+  }
+
+  50% {
+    transform: translateY(-6px)
+  }
+
+  100% {
+    transform: translateY(0)
+  }
 }
+
+.mixing-bowl-wrap img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Utilities */
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.link {
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width:680px) {
+  .card {
+    padding: 18px;
+    border-radius: 12px
+  }
+
+  .mixing-bowl-wrap {
+    display: none
+  }
+
+  /* hide GIF on small screens to save space */
+  .main-grid {
+    gap: 12px;
+  }
+}
+
+/* ===== Fixes & overrides — add this at the end of src/styles.css ===== */
+
+/* Ensure Bootstrap-style .row/.col grid behavior is preserved
+   (in case earlier rules set display:flex on parents or changed box-sizing) */
+.row,
+.g-4 {
+  --bs-gutter-x: 1.5rem;
+  /* keep normal gutter */
+  --bs-gutter-y: 1.5rem;
+}
+
+.row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  margin-right: calc(-1 * var(--bs-gutter-x)) !important;
+  margin-left: calc(-1 * var(--bs-gutter-x)) !important;
+  gap: 0 !important;
+  /* use column gutters */
+}
+
+.row>[class*="col-"] {
+  padding-right: var(--bs-gutter-x) !important;
+  padding-left: var(--bs-gutter-x) !important;
+  margin-bottom: var(--bs-gutter-y) !important;
+  box-sizing: border-box;
+}
+
+/* Make col-md-4 behave as expected */
+.col-md-4 {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .col-md-4 {
+    width: 33.333333%;
+  }
+}
+
+/* Ensure card-ra fills its column and the "h-100" utility works */
+.card-ra,
+.card-ra.h-100 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+  padding: 1.25rem;
+  /* ensure padding, override missing padding issues */
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  z-index: 1;
+}
+
+/* If cards appear stacked 2 then 1, increasing the container max-width helps:
+   make sure your features container uses .ra-container or .container */
+.ra-container,
+.container {
+  max-width: 1140px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Buttons: fix invisible button (text only on hover)
+   Force primary CTA styles across different classnames (.btn, .button, .btn-primary, .btn-ra-primary) */
+.btn,
+.button,
+button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.btn-primary,
+.btn.btn-primary,
+.button.btn-primary,
+.btn-ra-primary,
+.btn-primary:where(*) {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(19, 70, 134, 0.12) !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+}
+
+a.btn,
+a.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  border-radius: 8px;
+}
+
+/* Chat: make container layout stable and expand to available width */
+.chat-wrapper,
+.chat-card,
+.ra-chat-scroll {
+  width: 100% !important;
+  min-width: 0;
+  /* avoid overflow from flex items */
+}
+
+/* ra-chat-scroll should be block-level and have a clear stacking context */
+.ra-chat-scroll {
+  display: block !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* messages wrapper ensures vertical stacking */
+.ra-chat-scroll .messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Make bubble widths adapt and prevent overflow */
+.bubble {
+  max-width: 78%;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Ensure .h-100 behavior on parent containers preserves intended heights */
+.h-100 {
+  height: 100% !important;
+}
+
+
+.ra-hero {
+  background-image:
+    linear-gradient(180deg, rgba(139, 187, 255, 0.55), rgba(139, 187, 255, 0.35)),
+    linear-gradient(180deg, rgba(255, 242, 204, 0.02), rgba(255, 242, 204, 0.00)),
+    url('https://images.unsplash.com/photo-1542528180-a1208c5169a8?q=80&w=1600&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(19, 70, 134, 0.06);
+}
+
+/* Ensure hero buttons use the light-blue CTA we designed */
+.ra-hero .btn-primary {
+  background: linear-gradient(135deg, #01539f 0%, #003681 100%) !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 20px rgba(19, 70, 134, 0.08) !important;
+}
+
+/* Small helper: visible fallback for links that become transparent on hover
+   If some rules were setting color: transparent on links, this forces readable color */
+a,
+a:link,
+a:visited {
+  color: var(--primary) !important;
+  opacity: 1 !important;
+}
+
+/* Login card padding (explicit) */
+.login-page .card,
+.card.login-card {
+  padding: 30px !important;
+}
+
+/* Protect CTA z-index so blobs don't cover buttons */
+.card,
+.card-ra,
+.ra-hero,
+.navbar {
+  position: relative;
+  z-index: 2;
+}
+
+.card-ra2 {
+  width: 80vw;
+}
+
+/* Ensure primary CTAs show white text */
+.btn-primary,
+.btn.btn-primary,
+a.btn-primary,
+a.btn.btn-primary {
+  z-index: 5;
+  color: #fff !important;
+  background-color: #134686 !important;
+}
+
+/* Chat sizing: 90% viewport width and centered */
+.ra-chat-scroll {
+  width: 90vw;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Make sure parent containers don't constrain chat width */
+.chat-wrapper,
+.chat-card {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.label {
+  margin-right: 10px;
+}
+
+@media (min-width: 992px) {
+  .navbar-toggler {
+    display: none !important;
+  }
+}
+
+/* Side panels: keep panels sized to viewport and make recipe scrollable */
+
+/* 160px for header + paddings; tweak as needed. */
+:root {
+  --app-top-offset: 160px;
+  /* adjust this if you have a taller header/nav */
+}
+
+/* Layout row top alignment */
+.chat-layout-row {
+  align-items: flex-start !important;
+}
+
+/* Chat column: allow chat area to use available space and scroll internally */
+.ra-chat-column .card-ra2,
+.ra-chat-column .card-ra {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat card body should not force full viewport width — let the inner scroll control sizing */
+.chat-card-body {
+  min-height: 0;
+  /* enable child to scroll (important for flex containers) */
+}
+
+/* Ensure the chat scroll area is bounded by its container */
+.ra-chat-column .ra-chat-scroll {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  /* Allow chat to occupy remaining space; limit height to viewport minus header */
+  max-height: calc(100vh - var(--app-top-offset));
+  overflow-y: auto !important;
+}
+
+/* Recipe column: make the recipe card take available vertical space and be independently scrollable */
+.recipe-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* enable internal scroll on children within flex */
+  /* Limit the recipe card height so it does not push the whole page */
+  max-height: calc(100vh - var(--app-top-offset));
+  overflow: hidden;
+  /* hide overflow at card level; inner element will scroll */
+}
+
+/* Scroll area inside the recipe card */
+.recipe-scroll {
+  overflow-y: auto;
+  padding-right: 8px;
+  /* small padding so scrollbar doesn't overlap content */
+  box-sizing: border-box;
+}
+
+/* On small screens, allow natural stacking and remove fixed viewport constraints */
+@media (max-width: 991px) {
+  :root {
+    --app-top-offset: 120px;
+  }
+
+  .ra-chat-column .ra-chat-scroll,
+  .recipe-side,
+  .recipe-scroll {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* Ensure bubbles and recipe content wrap and don't overflow horizontally */
+.bubble {
+  max-width: 78% !important;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Small visual tweak: ensure recipe-side header (h2/h3) stays visible */
+.recipe-side h2,
+.recipe-side h3 {
+  margin-top: 0;
+}
+
+/* Side panels: placeholder styles + ensure recipe placeholder scroll-safe */
+
+/* (keep your existing declarations above; this block adds the placeholder rules) */
+
+.recipe-placeholder {
+  flex: 1 1 auto;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--muted, #6b7280);
+  padding: 2rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.96));
+  border: 1px dashed rgba(11, 18, 39, 0.04);
+  box-sizing: border-box;
+}
+
+/* Icon */
+.recipe-placeholder-icon {
+  width: 64px;
+  height: 64px;
+  fill: var(--primary, #134686);
+  opacity: 0.95;
+  flex-shrink: 0;
+}
+
+/* Heading and helper text */
+.recipe-placeholder h3 {
+  margin: 0;
+  color: var(--primary, #134686);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.recipe-placeholder .small {
+  font-size: 0.875rem;
+  color: var(--muted, #6b7280);
+  margin-top: 4px;
+}
+
+/* Maintain scroll behavior for the recipe-side when placeholder shown */
+.recipe-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: calc(100vh - var(--app-top-offset, 160px));
+  overflow: hidden;
+}
+
+.recipe-scroll {
+  overflow-y: auto;
+  padding-right: 8px;
+  box-sizing: border-box;
+}
+
+/* On small screens, allow placeholder to use natural height */
+@media (max-width: 991px) {
+  .recipe-side {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .recipe-placeholder {
+    min-height: 140px;
+    padding: 1.25rem;
+  }
+}
+
+/* 
+.recipe-scroll {
+  box-shadow: inset 0 8px 24px rgba(11,18,39,0.02);
+}
+*/
+
+/* End of override block */
