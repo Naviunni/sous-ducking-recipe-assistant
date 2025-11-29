@@ -1,57 +1,269 @@
-import React, { useEffect, useState } from 'react'
-import { isSavedByName, saveRecipe, removeSavedByName } from '../lib/saved.js'
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { listSaved, removeSavedByName } from '../lib/saved.js';
+import Avatar from '@mui/material/Avatar';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
+import RecipeCard from './RecipeCard.jsx';
 
-export default function RecipeCard({ recipe }) {
-  if (!recipe) return null
-  const [saved, setSaved] = useState(false)
+const StyledCard = styled(Card)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: 0,
+  height: '100%',
+  backgroundColor: (theme.vars || theme).palette.background.paper,
+  '&:hover': {
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+  },
+  '&:focus-visible': {
+    outline: '3px solid',
+    outlineColor: 'hsla(210, 98%, 48%, 0.5)',
+    outlineOffset: '2px',
+  },
+}));
 
-  useEffect(() => {
-    setSaved(isSavedByName(recipe.name))
-  }, [recipe?.name])
+const StyledCardContent = styled(CardContent)({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  padding: 16,
+  flexGrow: 1,
+  '&:last-child': {
+    paddingBottom: 16,
+  },
+});
 
-  function toggleSave() {
-    if (saved) {
-      removeSavedByName(recipe.name)
-      setSaved(false)
-    } else {
-      saveRecipe(recipe)
-      setSaved(true)
-    }
-  }
+const StyledTypography = styled(Typography)({
+  display: '-webkit-box',
+  WebkitBoxOrient: 'vertical',
+  WebkitLineClamp: 2,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});
 
+function Author({ authors }) {
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="h4 mb-0">{recipe.name}</h2>
-        <button type="button" onClick={toggleSave} className={`btn ${saved ? 'btn-danger' : 'btn-danger'} btn-sm`} title={saved ? 'Remove from saved' : 'Save recipe'}>
-          {saved ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/></svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/></svg>
-          )}
-        </button>
-      </div>
-      <div className="row g-3">
-        <div className="col-md-5">
-          <h3 className="h6">Ingredients</h3>
-          <ul className="list-group list-group-flush">
-            {recipe.ingredients?.map((ing, i) => (
-              <li key={i} className="list-group-item px-0">
-                {ing.quantity ? <strong className="me-1">{ing.quantity}</strong> : null}
-                {ing.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="col-md-7">
-          <h3 className="h6">Steps</h3>
-          <ol className="ps-3">
-            {recipe.steps?.map((s, i) => (
-              <li key={i} className="mb-2">{s}</li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </div>
-  )
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 2,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '16px',
+      }}
+    >
+      <Box
+        sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}
+      >
+        <AvatarGroup max={3}>
+          {authors.map((author, index) => (
+            <Avatar
+              key={index}
+              alt={author.name}
+              src={author.avatar}
+              sx={{ width: 24, height: 24 }}
+            />
+          ))}
+        </AvatarGroup>
+        <Typography variant="caption">
+          {authors.map((author) => author.name).join(', ')}
+        </Typography>
+      </Box>
+      <Typography variant="caption">July 14, 2021</Typography>
+    </Box>
+  );
+}
+
+Author.propTypes = {
+  authors: PropTypes.arrayOf(
+    PropTypes.shape({
+      avatar: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+};
+
+
+export default function Saved() {
+    const [items, setItems] = useState([]);
+    const [selected, setSelected] = useState(null);
+    
+    function refresh() {
+        setItems(listSaved());
+    }
+
+    useEffect(() => {
+        refresh();
+    }, []);
+
+    function remove(name) {
+        removeSavedByName(name);
+        refresh();
+    }
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, mt: 2 }}>
+            <div>
+                <Typography variant="h1" gutterBottom>
+                Your <font color="#FF8A00">Cookbook</font>
+                </Typography>
+                <Typography>A place for your favorite recipes to live, grow, and inspire your next meal. 💛</Typography>
+            </div>
+
+            {items.length === 0 ? (
+                <Typography color="text.secondary">
+                No saved recipes yet. Click the heart on any recipe to save it.
+                </Typography>
+            ) : (
+                <DynamicCards
+                items={items}
+                onRemove={remove}
+                onSelect={setSelected}
+                />
+            )}
+
+            {/* Modal Viewer */}
+            <Dialog
+              open={!!selected}
+              onClose={() => setSelected(null)}
+              maxWidth="md"
+              fullWidth
+            >
+              <DialogTitle
+                sx={{
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  pr: 1,
+                  background: 'linear-gradient(90deg, #FF8A00 0%, #FFC34D 100%)',
+                  color: 'white',
+                }}
+              >
+                Saved Recipe
+
+                <IconButton
+                  onClick={() => setSelected(null)}
+                  size="small"
+                  sx={{ ml: 1 }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+
+            <DialogContent dividers>
+              {selected && <RecipeCard recipe={selected} />}
+            </DialogContent>
+          </Dialog>
+
+        </Box>
+    );
+}
+
+/* ----------------------- ITEMS GRID ---------------------- */
+function DynamicCards({ items, onRemove, onSelect }) {
+  return (
+    <Grid container spacing={2} columns={12}>
+      {items.map((recipe, idx) => (
+        <Grid size={{ xs: 12, md: 4 }} key={idx}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}>
+            <StyledCard
+                variant="outlined"
+                tabIndex={0}
+                sx={{ height: '100%' }}
+                onClick={() => onSelect(recipe)}
+            >
+                <StyledCardContent sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        height: '100%',
+                    }}
+                >
+                    <div>
+                        {/* Saved date */}
+                        <Typography gutterBottom variant="caption" component="div">
+                            {`Saved: ${new Date(recipe.savedAt).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                            })}`}
+                        </Typography>
+
+                        {/* Title */}
+                        <Typography gutterBottom variant="h6" component="div">
+                            {recipe.name}
+                        </Typography>
+
+                        {/* Description preview */}
+                        <StyledTypography
+                            variant="body2"
+                            color="text.secondary"
+                            gutterBottom
+                        >
+                            {recipe.steps?.[0] || "A delicious saved recipe from your cookbook."}
+                        </StyledTypography>
+                    </div>
+                </StyledCardContent>
+
+                {/* -------- FOOTER -------- */}
+                <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    px: 2,
+                    py: 1.5,
+                    gap: 1,
+                    }}
+                >
+                    {/* Chips */}
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Chip
+                        label={`${recipe.ingredients?.length || 0} ingredients`}
+                        color="warning"
+                        variant="outlined"
+                        size="small"
+                        sx={{ fontWeight: 500 }}
+                    />
+                    <Chip
+                        label={`${recipe.steps?.length || 0} steps`}
+                        color="warning"
+                        variant="outlined"
+                        size="small"
+                        sx={{ fontWeight: 500 }}
+                    />
+                    </Box>
+
+                    {/* Remove button */}
+                    <IconButton
+                    size="small"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onRemove(recipe.name);
+                    }}
+                    sx={{ color: 'error.main' }}
+                    >
+                    <DeleteIcon fontSize="small" />
+                    </IconButton>
+                </Box>
+                </StyledCard>
+          </Box>
+        </Grid>
+      ))}
+    </Grid>
+  );
 }

@@ -73,71 +73,71 @@ export default function RecipeCard({ recipe }) {
       <Grid container spacing={3}>
         
         {/* INGREDIENTS */}
-<Grid item xs={12} md={5}>
-  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}> Ingredients </Typography>
+        <Grid item xs={12} md={5}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}> Ingredients </Typography>
 
-  <List
-    dense
-    disablePadding
-    sx={{
-      bgcolor: 'rgba(255, 195, 77, 0.15)',     // 🍊 soft yellow-orange wash
-      borderRadius: 2,
-      py: 1,
-      px: 1,
-      border: '1px solid rgba(255,138,0,0.2)', // 🟧 subtle border
-    }}
-  >
-    {recipe.ingredients?.map((ing, i) => (
-      <ListItem
-        key={i}
-        disableGutters
-        sx={{
-          py: 0.7,
-          px: 1,
-          borderBottom:
-            i === recipe.ingredients.length - 1
-              ? 'none'
-              : '1px solid rgba(255,138,0,0.15)', // 🟧 divider
-        }}
-      >
-        <ListItemText
-          primaryTypographyProps={{
-            sx: {
-              display: 'flex',
-              alignItems: 'center',
-              fontSize: '0.95rem',
-            }
-          }}
-          primary={
-            <>
-              {/* Orange bullet dot */}
-              <Box
+          <List
+            dense
+            disablePadding
+            sx={{
+              bgcolor: 'rgba(255, 195, 77, 0.15)',
+              borderRadius: 2,
+              py: 1,
+              px: 1,
+              border: '1px solid rgba(255,138,0,0.2)',
+            }}
+          >
+            {recipe.ingredients?.map((ing, i) => (
+              <ListItem
+                key={i}
+                disableGutters
                 sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  backgroundColor: '#FF8A00',
-                  mr: 1.2,
-                  flexShrink: 0
+                  py: 0.7,
+                  px: 1,
+                  borderBottom:
+                    i === recipe.ingredients.length - 1
+                      ? 'none'
+                      : '1px solid rgba(255,138,0,0.15)',
                 }}
-              />
+              >
+                <ListItemText
+                  primaryTypographyProps={{
+                    sx: {
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: '0.95rem',
+                    }
+                  }}
+                  primary={
+                    <>
+                      {/* Orange bullet dot */}
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: '#FF8A00',
+                          mr: 1.2,
+                          flexShrink: 0
+                        }}
+                      />
 
-              {/* Quantity + ingredient text */}
-              <span>
-                {ing.quantity && (
-                  <strong style={{ marginRight: '4px', color: '#D97700' }}>
-                    {ing.quantity}
-                  </strong>
-                )}
-                {ing.name}
-              </span>
-            </>
-          }
-        />
-      </ListItem>
-    ))}
-  </List>
-</Grid>
+                      {/* Quantity + ingredient text */}
+                      <span>
+                        {ing.quantity && (
+                          <strong style={{ marginRight: '4px', color: '#D97700' }}>
+                            {ing.quantity}
+                          </strong>
+                        )}
+                        {ing.name}
+                      </span>
+                    </>
+                  }
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
 
         {/* STEPS */}
         <Grid item xs={12} md={7}>
